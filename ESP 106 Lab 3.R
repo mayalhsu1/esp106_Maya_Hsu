@@ -82,20 +82,23 @@ for (i in 1:2){
        cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Outdoor Air Pollution Death Rate", ylim = c(0, 275))
 }
 
-mycolor <- c("tomato4","deeppink", "gold2", "forestgreen", "purple1", "blue")[as.factor(merge_2015$Continent)]
+merge_cont <- subset(merge, Continent != "")
+colors <- c("tomato4","deeppink", "gold2", "forestgreen", "purple1", "blue")
+f <- as.factor(merge_cont$Continent)
+levs <- levels(f)
+i <- as.integer(f)
+head(f)
+mycolor <- colors[i]
 
-merge_2015 <- subset(merge, Year == 2015)
 par(mfrow = c(1,2), mar=c(7,5,5,3))
-for (i in 1:2){
-  plot(merge_2015$log_GDP, merge_2015$Deaths_Household, main = "GDP per Capita vs.\nIndoor Air Pollution Death Rate",
+  plot(merge_cont$log_GDP, merge_cont$Deaths_Household, main = "GDP per Capita vs.\nIndoor Air Pollution Death Rate",
        cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Indoor Air Pollution Death Rate", ylim = c(0, 275),
        col = mycolor, pch = 20)
-  legend("topright", unique(merge_2015$Continent), col = c("tomato4","deeppink", "gold2", "forestgreen", "purple1", "blue"),
+  legend("topright", levs, col = colors,
                            pch = 20, cex = 0.7)
-  plot(merge_2015$log_GDP, (merge_2015$Deaths_Ozone + merge_2015$Deaths_PM), main = "GDP per Capita vs.\nOutdoor Air Pollution Death Rate",
+  plot(merge_cont$log_GDP, (merge_cont$Deaths_Ozone + merge_cont$Deaths_PM), main = "GDP per Capita vs.\nOutdoor Air Pollution Death Rate",
        cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Outdoor Air Pollution Death Rate", ylim = c(0, 275),
        col = mycolor, pch = 20)
-  legend("topright", unique(merge_2015$Continent), col = c("tomato4","deeppink", "gold2", "forestgreen", "purple1", "blue"),
+  legend("topright", unique(merge_cont$Continent), col = colors,
          pch = 20, cex = 0.7)
-}
 
