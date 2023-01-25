@@ -8,22 +8,19 @@ date: "2023-01-25"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+#1. First read in the two csv files: gdppercapitaandgini and airpollution
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#Both datasets are from Our World in Data: ourworldindata.org
+#The GDP dataset has GDP per capita and the GINI index (a measure of income inequality: https://en.wikipedia.org/wiki/Gini_coefficient)
+#The air pollution dataset has death rates from indoor and outdoor air pollution - units are in deaths per 100,000 people
+#Indoor air pollution is the Household Air Pollution from Solid Fules
+#Outdoor air pollution is split into particulate matter and ozone
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#Hint: The column names are long and cumbersome (because they contain information about units et) - you might want to rename some of the columns to make them easier to work with
 
-```{r cars}
-summary(cars)
+```{r}
+setwd("/Users/mayahsu/Desktop/school/environmental data science/")
+air <- read.csv("week3/airpollution.csv")
+inequality <- read.csv("week3/gdppercapiandgini.csv")
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+I set my working directory to a folder on my desktop called "environmental data science." This folder also contains the excel files for this lab. I read the excel files into R and renamed them air (air pollution data) and inequality (GDP and GINI data).
