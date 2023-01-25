@@ -52,7 +52,6 @@ plot(x = air_india$Year, y = air_india$Deaths_Household, ylim = c(0, 141), type=
 lines(air_germany$Year, air_germany$Deaths_Household, col = "magenta3", lty = 1, lwd = 2.5)
 lines(air_germany$Year, air_germany$outdoor, col = "magenta3" , lty = 3, lwd = 2.5)
 lines(air_india$Year, air_india$Outdoor, col="forestgreen", lty = 3, lwd = 2.5)
-
 legend("topright", c("India Indoor", "India Outdoor", "Germany Indoor", "Germany Outdoor"),
        lty = c(1, 3, 1, 3), col=c("forestgreen", "forestgreen", "magenta3", "magenta3"), 
        lwd = c(2.5, 2.5, 2.5, 2.5), cex=1)
