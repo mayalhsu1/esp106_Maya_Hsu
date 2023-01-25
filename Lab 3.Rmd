@@ -65,3 +65,16 @@ legend("topright", c("India Indoor", "India Outdoor", "Germany Indoor", "Germany
        lwd = c(2.5, 2.5, 2.5, 2.5), cex=1)
 ```
 I created a line graph that compares indoor and outdoor deaths from air pollution in India and Germany. The forestgreen lines are India and the magenta3 lines are Germany. The solid lines represent deaths from indoor air pollution and the dotted lines represent deaths from outdoor air pollution.
+
+#3. Merge the air pollution data with the gdp data using merge()
+# Merge is a function that combines data across two data frames by matching ID rows
+#By default merge will identify ID rows as those where column names are the same between datasets, but it is safer to specify the columns you want to merge by yourself using "by"
+#In our case, we want to merge both by country (either the "Entity" or "Code" columns) and year columns
+#Note that by default, the merge function keeps only the entries that appear in both data frames - that is fine for this lab. If you need for other applications, you can change using the all.x or all.y arguments to the function - check out the documentation at ?merge
+
+```{r}
+merge <- merge(air, inequality, by = c("Entity", "Code", "Year"))
+log_GDP <- log(merge$GDP_per_capita)
+merge <- cbind(merge, log_GDP)
+```
+I merged the air and inequality data frames by "Entity", "Code", and "Year" and called the new data frame merge. I also created a new column called log_GDP that is the log of GDP and added it to the merge data frame. 
