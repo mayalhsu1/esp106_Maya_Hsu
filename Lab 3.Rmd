@@ -24,3 +24,44 @@ air <- read.csv("week3/airpollution.csv")
 inequality <- read.csv("week3/gdppercapiandgini.csv")
 ```
 I set my working directory to a folder on my desktop called "environmental data science." This folder also contains the excel files for this lab. I read the excel files into R and renamed them air (air pollution data) and inequality (GDP and GINI data).
+
+#2. Chose two countries that you are interested in and make a plot showing the death rates from indoor air pollution and outdoor air pollution (sum of particulate matter and ozone) over time
+#Distinguish the countries using different colored lines and the types of pollution using different line types
+#Make sure to add a legend and appropriate titles for the axes and plot 
+
+#Hint: you can see all the different country names using unique(x$Entity) where x is the data frame containing the air pollution data
+#Then create two new data frames that countain only the rows corresponding to each of the two countries you want to look at
+#Create a new column of total outdoor air pollution deaths by summing death rates from particulate matter and ozone
+#Use these to make your plot and add the lines you need
+
+#Hint: you might have to set the y scale manually to make sure your plot is wide enough to show both countries. You can do this using the "ylim" argument in plot
+
+```{r}
+i <- "India" == air$Entity
+air_india <- air[i, ]
+out_ind <- air_india$Deaths_Ozone + air_india$Deaths_PM
+air_india <- cbind(air_india, out_ind)
+                 
+air_germany <- subset(air, Entity == "Germany")
+out_ger <- air_germany$Deaths_Ozone + air_germany$Deaths_PM
+air_germany <- cbind(air_germany, out_ger)
+```
+I chose to look at India and Germany. I created a new data frame from air called air_india. This data frame only contains the rows where "Entity" is "India." I also created a new data column called out_ind that is the total deaths from outdoor air pollution, which is the sum of deaths from ozone and deaths from particulate matter. I also created a new data frame from air called air_germany. This data frame only contains the rows where "Entity" is "Germany" I also created a new data column called out_ger that is the total deaths from outdoor air pollution, which is the sum of deaths from ozone and deaths from particulate matter.
+
+```{r}
+par(mar=c(5.1,4.1,4.1,2.1))
+plot(x = air_india$Year, y = air_india$Deaths_Household, ylim = c(0, 141), type='l', col = "forestgreen",
+     xlab = "Year", ylab = "Deaths", main = "Deaths from Indoor and Outdoor\nAir Pollution", 
+     lty = 1, lwd = 2.5)
+#indoor India
+lines(air_india$Year, air_india$out_ind, col="forestgreen", lty = 3, lwd = 2.5)
+#outdoor India
+lines(air_germany$Year, air_germany$Deaths_Household, col = "magenta3", lty = 1, lwd = 2.5)
+#indoor Germany
+lines(air_germany$Year, air_germany$out_ger, col = "magenta3" , lty = 3, lwd = 2.5)
+#outdoor Germany
+legend("topright", c("India Indoor", "India Outdoor", "Germany Indoor", "Germany Outdoor"),
+       lty = c(1, 3, 1, 3), col=c("forestgreen", "forestgreen", "magenta3", "magenta3"), 
+       lwd = c(2.5, 2.5, 2.5, 2.5), cex=1)
+```
+I created a line graph that compares indoor and outdoor deaths from air pollution in India and Germany. The forestgreen lines are India and the magenta3 lines are Germany. The solid lines represent deaths from indoor air pollution and the dotted lines represent deaths from outdoor air pollution.
