@@ -77,4 +77,43 @@ merge <- merge(air, inequality, by = c("Entity", "Code", "Year"))
 log_GDP <- log(merge$GDP_per_capita)
 merge <- cbind(merge, log_GDP)
 ```
-I merged the air and inequality data frames by "Entity", "Code", and "Year" and called the new data frame merge. I also created a new column called log_GDP that is the log of GDP and added it to the merge data frame. 
+I merged the air and inequality data frames by "Entity", "Code", and "Year" and called the new data frame merge. I also created a new column called log_GDP that is the log of GDP and added it to the merge data frame.
+
+#4. Make a plot with two subplots - one showing a scatter plot between log of per-capita GDP (x axis) and indoor air pollution death rate (y axis) and one showing log of per-capita GDP (x axis) and outdoor air pollution (y axis)
+#Make sure to add appropraite titles to the plots and axes
+#Use ylim to keep the range of the y axis the same between the two plots - this makes it easier for the reader to compare across the two graphs
+#STRECTH GOAL CHALLENGE - color the points based on continent. NOT REQUIRED FOR FULL POINTS - a challenge if you want to push yourself - continent info is included in the GDP dataset, but it is only listed for the year 2015
+#If you are trying this and getting stuck ASK FOR HELP - there are some tips and tricks for making it easier 
+
+```{r}
+par(mfrow = c(1,2), mar=c(7,5,5,3))
+for (i in 1:2){
+  plot(merge$log_GDP, merge$Deaths_Household, main = "GDP per Capita vs.\nIndoor Air Pollution Death Rate",
+       cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Indoor Air Pollution Death Rate", ylim = c(0, 275))
+  plot(merge$log_GDP, (merge$Deaths_Ozone + merge$Deaths_PM), main = "GDP per Capita vs.\nOutdoor Air Pollution Death Rate",
+       cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Outdoor Air Pollution Death Rate", ylim = c(0, 275))
+}
+```
+This plot graphs GDP against indoor air pollution death rates and GDP against outdoor air pollution death rates.
+
+```{r}
+merge_cont <- subset(merge, merge$Continent != "")
+mycolor <- c("tomato4","deeppink", "gold2", "forestgreen", "purple1", "blue")
+f <- as.factor(merge_cont$Continent)
+level <- levels(f)
+int <- as.integer(f)
+colors = mycolor[i]
+
+par(mfrow = c(1,2), mar=c(7,5,5,3))
+  plot(merge_cont$log_GDP, merge_cont$Deaths_Household, main = "GDP per Capita vs.\nIndoor Air Pollution Death Rate",
+       cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Indoor Air Pollution Death Rate", ylim = c(0, 275),
+       col = mycolor, pch = 20)
+  legend("topright", level, col = colors,
+         pch = 20, cex = 0.7)
+  plot(merge_cont$log_GDP, (merge_cont$Deaths_Ozone + merge_cont$Deaths_PM), main = "GDP per Capita vs.\nOutdoor Air Pollution Death Rate",
+       cex.main = 0.7, xlab = "Log of Per-Capita GDP", ylab = "Outdoor Air Pollution Death Rate", ylim = c(0, 275),
+       col = mycolor, pch = 20)
+  legend("topright", level, col = colors,
+         pch = 20, cex = 0.7)
+```
+This subplot graphs GDP against indoor air pollution death rates and GDP against outdoor air pollution death rates. The points are supposed to be colored by continent, but something went wrong because the colors on the graph do not seem to be properly matching with the continent. I created a vector called mycolor that has specific colors, and then I assigned those colors to continent by creating a varibale of the different levels in the variable "Continent."
