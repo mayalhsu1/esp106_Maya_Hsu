@@ -60,14 +60,10 @@ Your data frame right now has one column with a year and one with the month. We 
 
 ```{r}
 #Hint: Use paste0() to combine data and characters (i.e. the required separators "-")
-
-year <- combined[ , 1]
-month <- combined[ ,2]
-
 date <- c()
 
 for(i in 1:length(year)){
-  date <- c(date, paste0(c(year[i], month[i], 01), collapse = "-"))
+  date <- c(date, paste0(c(combined[i, 1], combined[i, 2], 01), collapse = "-"))
 }
 date
 ```
@@ -91,14 +87,21 @@ Make sure to add proper axis labes and units (using +labs(x="",y=""))
 ```{r, message=FALSE, warning=FALSE}
 #if you don't already have ggplot2 then install it with install.packages("ggplot2")
 library(ggplot2) 
-
+ggplot(combined, aes(x = date, y = MHHW, group = city, color = city))+
+  geom_line()+
+  labs(x = "Date", y = "Mean Higher Water")+
+  geom_smooth(aes(x = date, y = MHHW), method="lm", inherit.aes = FALSE)
 ```
 
 5. Now make a slightly different plot with the same x and y variables, but use facet_wrap() to make a subplot separately for each city. Add a best-fit line for each subplot. See the example plot uploaded to Canvas (Plot 2)
 
 ```{r, message=FALSE}
 #Hint: you should only need minor modification of the code from question 4 to make this plot
-
+ggplot(combined, aes(x = date, y = MHHW, group = city, color = city))+
+  geom_line()+
+  labs(x = "Date", y = "Mean Higher Water")+
+  geom_smooth(method="lm")+
+  facet_wrap(~city)
 ```
 
 ### Part 2 - Wednesday
