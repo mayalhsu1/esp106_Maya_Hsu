@@ -18,14 +18,6 @@ In this lab we will look at daily tidy data downloaded from NOAA's Tides and Cur
 
 Before you start: add this file to your github repository, and commit your changes throughout the time you work on it.
 
-```{r, setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/tmp')
-setwd("/Users/mayahsu/Desktop/school/environmental data science/week4")
-unzip("ESP106_week4_data.zip")
-files <- list.files(full.names=TRUE)
-files <- list.files(pattern = '\\.csv')
-```
-
 ### Part 1 - Monday
 
 1. Create a data frame containing data on the city name and tide gauge ID
@@ -40,9 +32,22 @@ files <- list.files(pattern = '\\.csv')
 #Hint 3: It will be easiest to add the names of the city to the data frames immediately after reading them in, before binding everything together into a single data-frame
 ```
 
-```{r}
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/tmp')
+setwd("/Users/mayahsu/Desktop/school/environmental data science/week4")
+unzip("ESP106_week4_data.zip")
+files <- list.files(full.names=TRUE)
+files <- list.files(pattern = '\\.csv')
 
 
+tables <- lapply(files, read.csv)
+tables[[1]]$city <- "boston"
+tables[[2]]$city <- "newyork"
+tables[[3]]$city <- "baltimore"
+tables[[4]]$city <- "charleston"
+tables[[5]]$city <- "miami"
+tables[[6]]$city <- "corpus"
+combined <- do.call(rbind, tables)
 ```
 
 2b. Take a look at your data frame - is this in a tidy format?
@@ -56,13 +61,22 @@ Your data frame right now has one column with a year and one with the month. We 
 ```{r}
 #Hint: Use paste0() to combine data and characters (i.e. the required separators "-")
 
+year <- combined[ , 1]
+month <- combined[ ,2]
+
+date <- c()
+
+for(i in 1:length(year)){
+  date <- c(date, paste0(c(year[i], month[i], 01), collapse = "-"))
+}
+date
 ```
 
 3b. Use as.Date to convert your new date column to a date object in R
 
 ```{r}
-
-
+date <- as.Date(date)
+combined$Date <- date
 ```
 
 Now lets use ggplot to make some cool graphs of this data using ggplot.
@@ -71,7 +85,8 @@ Now lets use ggplot to make some cool graphs of this data using ggplot.
 
  * Plot the date on the x axis and MHHW (mean higher high water - i.e. the average daily high water level) on the y axis
 Make sure to add proper axis labes and units (using +labs(x="",y=""))
- * Add a single best-fit line through the full data set using geom_smooth(method="lm") - note that by default ggplot will fit one best fit line for each city. To override this specify the aestetic mapping (aes()) again within the geom_smooth function and add the argument inherit.aes=FALSE
+ * Add a single best-fit line through the full data set using geom_smooth(method="lm") - note that by default ggp
+ lot will fit one best fit line for each city. To override this specify the aestetic mapping (aes()) again within the geom_smooth function and add the argument inherit.aes=FALSE
  
 ```{r, message=FALSE, warning=FALSE}
 #if you don't already have ggplot2 then install it with install.packages("ggplot2")
