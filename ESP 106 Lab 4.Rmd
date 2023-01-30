@@ -16,7 +16,15 @@ In this lab we will look at daily tidy data downloaded from NOAA's Tides and Cur
 5. Miami: 8723214
 6. Corpus Christi: 8775296
 
-Before you start: add this file to your github repository, and commit your changes throughout the time you work on it. 
+Before you start: add this file to your github repository, and commit your changes throughout the time you work on it.
+
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/tmp')
+setwd("/Users/mayahsu/Desktop/school/environmental data science/week4")
+unzip("ESP106_week4_data.zip")
+files <- list.files(full.names=TRUE)
+files <- list.files(pattern = '\\.csv')
+```
 
 ### Part 1 - Monday
 
@@ -29,7 +37,11 @@ Before you start: add this file to your github repository, and commit your chang
 
 #Hint 2: you might want to create a data frame using the first csv file. Then loop through from files 2 to 6 reading in the csv file and using rbind() to attach it to the bottom of your full data frame
 
-#Hint 3: It will be easiest to add the names of the city to the data frames immediately after reading them in, before binding everything together into a single data-frame 
+#Hint 3: It will be easiest to add the names of the city to the data frames immediately after reading them in, before binding everything together into a single data-frame
+```
+
+```{r}
+
 
 ```
 
