@@ -62,10 +62,9 @@ Your data frame right now has one column with a year and one with the month. We 
 #Hint: Use paste0() to combine data and characters (i.e. the required separators "-")
 date <- c()
 
-for(i in 1:length(year)){
+for(i in 1:nrow(combined)){
   date <- c(date, paste0(c(combined[i, 1], combined[i, 2], 01), collapse = "-"))
 }
-date
 ```
 
 3b. Use as.Date to convert your new date column to a date object in R
@@ -111,7 +110,8 @@ In this part of the lab we will identify some outliers, and practice running reg
 6. Make a box plot showing the distribution of the highest tides each month ("Highest" column in the NOAA data) . (Ideally practice using ggplot by using geom_boxplot() - put the city on the x axis and Highest on the y. But this can also be done in base R). See the example plot on Canvas (Plot 3)
 
 ```{r}
-
+ggplot(combined, aes(x = city, y = Highest))+
+  geom_boxplot()
 ```
 
 Notice the very extreme value in New York City - a major outlier both within New York and compared to all the other cities
