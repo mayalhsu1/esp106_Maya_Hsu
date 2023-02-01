@@ -3,6 +3,8 @@ title: "ESP106-Lab4"
 author: "Fran M"
 date: "January 29, 2023"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Lab 4
@@ -98,7 +100,7 @@ ggplot(combined, aes(x = date, y = MHHW, group = City, color = City))+
 #Hint: you should only need minor modification of the code from question 4 to make this plot
 ggplot(combined, aes(x = date, y = MHHW, group = City))+
   geom_line()+
-  labs(x = "Date", y = "Mean Higher Water")+
+  labs(x = "Date", y = "Mean Higher High Water (MHHW", title = "Mean Higher High Water by City")+
   geom_smooth(method="lm")+
   facet_wrap(~City)
 ```
@@ -110,8 +112,9 @@ In this part of the lab we will identify some outliers, and practice running reg
 6. Make a box plot showing the distribution of the highest tides each month ("Highest" column in the NOAA data) . (Ideally practice using ggplot by using geom_boxplot() - put the city on the x axis and Highest on the y. But this can also be done in base R). See the example plot on Canvas (Plot 3)
 
 ```{r}
-ggplot(combined, aes(x = city, y = Highest))+
-  geom_boxplot()
+ggplot(combined, aes(x = City, y = Highest))+
+  geom_boxplot()+
+  labs(x = "City", y = "Height of Highest Tide Each Month", title = "Highest Tide Each Month by City")
 ```
 
 Notice the very extreme value in New York City - a major outlier both within New York and compared to all the other cities
@@ -135,17 +138,32 @@ Finally, we will fit a linear model to estimate the rate of sea-level rise acros
 ```{r}
 #Hint: the forumla in your lm() function is of the form y~x where y here is MHHW and x is your date column
 
-m <- lm(Date ~ MHHW, data = combined)
+m <- lm(MHHW ~ Date, data = combined)
 m
-
+plot(MHHW ~ Date, data = combined)
+abline(m)
+coefficients(m)
 summary(m)
 ```
 
 8b. Give the estimated coefficient of the date column. Is it statistically significant (i.e. has a p-value less than 0.05)?
 
+The p-value is 5.314e-14, which is less than 0.05, so the estimated coefficient is statistically significant.
+
 This coefficient gives us the average increase in high tide levels each day, across all six cities, for this ten year time frame (i.e. the units of the coefficient are in m per day).
 
 8c. Using your estimated coefficient, estimate the mean increase in sea-level over the 10 year time frame from 2011-2020.
+
+```{r}
+p = predict(m, combined[c(1, nrow(combined)), ])
+diff(p)
+
+predict(m)
+
+print(2.732e-05 * (3650))
+```
+
+0.09895307 over the 10-year period.
 
 Upload your .Rmd file and you knitted file with the answers and plots to Canvas
 
@@ -161,3 +179,4 @@ paste0("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=201
 
 See if you can make sense of this URL given the options listed at the website describing access to the API
 
+begin_date=20110101&end_date=20200101
