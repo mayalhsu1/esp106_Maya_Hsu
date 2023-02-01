@@ -41,12 +41,12 @@ files <- list.files(pattern = '\\.csv')
 
 
 tables <- lapply(files, read.csv)
-tables[[1]]$city <- "boston"
-tables[[2]]$city <- "newyork"
-tables[[3]]$city <- "baltimore"
-tables[[4]]$city <- "charleston"
-tables[[5]]$city <- "miami"
-tables[[6]]$city <- "corpus"
+tables[[1]]$City <- "Boston"
+tables[[2]]$City <- "New York"
+tables[[3]]$City <- "Baltimore"
+tables[[4]]$City <- "Charleston"
+tables[[5]]$City <- "Miami"
+tables[[6]]$City <- "Corpus Christi"
 combined <- do.call(rbind, tables)
 ```
 
@@ -86,7 +86,7 @@ Make sure to add proper axis labes and units (using +labs(x="",y=""))
 ```{r, message=FALSE, warning=FALSE}
 #if you don't already have ggplot2 then install it with install.packages("ggplot2")
 library(ggplot2) 
-ggplot(combined, aes(x = date, y = MHHW, group = city, color = city))+
+ggplot(combined, aes(x = date, y = MHHW, group = City, color = City))+
   geom_line()+
   labs(x = "Date", y = "Mean Higher Water")+
   geom_smooth(aes(x = date, y = MHHW), method="lm", inherit.aes = FALSE)
@@ -96,11 +96,11 @@ ggplot(combined, aes(x = date, y = MHHW, group = city, color = city))+
 
 ```{r, message=FALSE}
 #Hint: you should only need minor modification of the code from question 4 to make this plot
-ggplot(combined, aes(x = date, y = MHHW, group = city, color = city))+
+ggplot(combined, aes(x = date, y = MHHW, group = City))+
   geom_line()+
   labs(x = "Date", y = "Mean Higher Water")+
   geom_smooth(method="lm")+
-  facet_wrap(~city)
+  facet_wrap(~City)
 ```
 
 ### Part 2 - Wednesday
@@ -120,10 +120,13 @@ Notice the very extreme value in New York City - a major outlier both within New
 
 ```{r}
 #Hint: The which.max() function might be useful here
-
+which.max(combined$Highest)
+combined[141,]
 ```
 
 7b. What month and year did this outlier event occur in? What meteorological event happened in New York in that month that probably caused this outlier event? (Feel free to use Google - I don't expect you to know this off hand)
+
+Hurricane Sandy hit New York in October of 2012.
 
 Finally, we will fit a linear model to estimate the rate of sea-level rise across these 6 cities.
 
@@ -132,6 +135,10 @@ Finally, we will fit a linear model to estimate the rate of sea-level rise acros
 ```{r}
 #Hint: the forumla in your lm() function is of the form y~x where y here is MHHW and x is your date column
 
+m <- lm(Date ~ MHHW, data = combined)
+m
+
+summary(m)
 ```
 
 8b. Give the estimated coefficient of the date column. Is it statistically significant (i.e. has a p-value less than 0.05)?
