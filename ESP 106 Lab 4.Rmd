@@ -4,7 +4,7 @@ author: "Fran M"
 date: "January 29, 2023"
 output: html_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ## Lab 4
@@ -52,7 +52,11 @@ tables[[6]]$City <- "Corpus Christi"
 combined <- do.call(rbind, tables)
 ```
 
+**I set my working directory, unzipped the file with the data, and created a list called tables in which each item is the data for one city. I added a column to each data frame with the appropriate city and combined the data frames into one large one called combined.**
+
 2b. Take a look at your data frame - is this in a tidy format?
+
+**The data seems to be in a tidy format because each row is an entry, the columns represent different variables, and each cell is an entry.**
 
 We are going to examine the question of whether these gauges show evidence of rising sea levels. One of the first things we have to deal with is the issue of dates. 
 
@@ -68,6 +72,7 @@ for(i in 1:nrow(combined)){
   date <- c(date, paste0(c(combined[i, 1], combined[i, 2], 01), collapse = "-"))
 }
 ```
+**I created en empty vector called data. I then created a for loop that used the Year and Month columns to create a date for each entry.**
 
 3b. Use as.Date to convert your new date column to a date object in R
 
@@ -75,6 +80,7 @@ for(i in 1:nrow(combined)){
 date <- as.Date(date)
 combined$Date <- date
 ```
+**I used the as.Date function to format the date and then added a column to the data frame called Date.
 
 Now lets use ggplot to make some cool graphs of this data using ggplot.
 
@@ -90,9 +96,11 @@ Make sure to add proper axis labes and units (using +labs(x="",y=""))
 library(ggplot2) 
 ggplot(combined, aes(x = date, y = MHHW, group = City, color = City))+
   geom_line()+
-  labs(x = "Date", y = "Mean Higher Water")+
+  labs(x = "Date", y = "Mean Higher High Water (meters)")+
   geom_smooth(aes(x = date, y = MHHW), method="lm", inherit.aes = FALSE)
 ```
+
+**This graph plots Mean Higher High Water versus Date grouped by city.**
 
 5. Now make a slightly different plot with the same x and y variables, but use facet_wrap() to make a subplot separately for each city. Add a best-fit line for each subplot. See the example plot uploaded to Canvas (Plot 2)
 
@@ -100,7 +108,7 @@ ggplot(combined, aes(x = date, y = MHHW, group = City, color = City))+
 #Hint: you should only need minor modification of the code from question 4 to make this plot
 ggplot(combined, aes(x = date, y = MHHW, group = City))+
   geom_line()+
-  labs(x = "Date", y = "Mean Higher High Water (MHHW", title = "Mean Higher High Water by City")+
+  labs(x = "Date", y = "Mean Higher High Water (meters)", title = "Mean Higher High Water by City")+
   geom_smooth(method="lm")+
   facet_wrap(~City)
 ```
@@ -129,7 +137,7 @@ combined[141,]
 
 7b. What month and year did this outlier event occur in? What meteorological event happened in New York in that month that probably caused this outlier event? (Feel free to use Google - I don't expect you to know this off hand)
 
-Hurricane Sandy hit New York in October of 2012.
+**Hurricane Sandy hit New York in October of 2012.**
 
 Finally, we will fit a linear model to estimate the rate of sea-level rise across these 6 cities.
 
@@ -148,7 +156,8 @@ summary(m)
 
 8b. Give the estimated coefficient of the date column. Is it statistically significant (i.e. has a p-value less than 0.05)?
 
-The p-value is 5.314e-14, which is less than 0.05, so the estimated coefficient is statistically significant.
+
+**The p-value is 5.314e-14, which is less than 0.05, so the estimated coefficient is statistically significant.**
 
 This coefficient gives us the average increase in high tide levels each day, across all six cities, for this ten year time frame (i.e. the units of the coefficient are in m per day).
 
@@ -163,7 +172,7 @@ predict(m)
 print(2.732e-05 * (3650))
 ```
 
-0.09895307 over the 10-year period.
+**0.09895307 meters over the 10-year period.**
 
 Upload your .Rmd file and you knitted file with the answers and plots to Canvas
 
