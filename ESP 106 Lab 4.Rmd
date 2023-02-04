@@ -2,8 +2,10 @@
 title: "ESP106-Lab4"
 author: "Fran M"
 date: "January 29, 2023"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -172,7 +174,7 @@ predict(m)
 print(2.732e-05 * (3650))
 ```
 
-**0.09895307 meters over the 10-year period.**
+**0.09895307 meters over the 10-year period. The first method I did used the predict function to predict the values based on the model. I then subtracted the first entry from the last entry. The second method I used relied in the equation y = mx + b. The coefficient times the 3650 (the number of days in 10 years) should give the average increase over 10 years. These two methods produced very similar answers (0.09895307 for method one and 0.099718 for method 2).** 
 
 Upload your .Rmd file and you knitted file with the answers and plots to Canvas
 
