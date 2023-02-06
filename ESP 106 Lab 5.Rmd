@@ -1,11 +1,13 @@
 ---
 title: "Lab 5"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
 require("knitr")
-opts_knit$set(root.dir = "/Users/mayahsu/Desktop/school/environmental data science") #use this to set your working directory so knitr understands it
+opts_knit$set(root.dir = "/Users/mayahsu/Desktop/school/environmental data science/week5") #use this to set your working directory so knitr understands it
 ```
 
 ## Lab 5
@@ -19,8 +21,8 @@ I have done some pre-processing of the data for you for this lab, to create two 
 First read in the countrytotals.csv data frame
 ```{r echo=FALSE}
 knitr::opts_knit$set(root.dir = '/tmp')
-setwd("/Users/mayahsu/Desktop/school/environmental data science")
-country <- read.csv("week5/countrytotals.csv")
+setwd("/Users/mayahsu/Desktop/school/environmental data science/week5")
+country <- read.csv("countrytotals.csv")
 ```
 
 Have a look at the data frame. The column "total" gives the total number of pieces of plastic picked up in that country in 2020. The columns "num_events" and "volunteers" give the number of trash pick-up events and the number of volunteers in that country. We are going to use this to investigate where the plastic trash problem is worst.
@@ -34,7 +36,7 @@ Have a look at the data frame. The column "total" gives the total number of piec
 
 country <- country[order(country$total, decreasing = TRUE),]
 str(country)
-worst <- country[1:5, ]
+worst <- country[1:5,]
 worst
 ```
 
@@ -46,7 +48,7 @@ worst
 library(tidyverse)
 ggplot(country, aes(x = reorder(country, -volunteers), y = volunteers))+
   geom_col()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
   labs(x = "Country", y = "Number of Volunteers", title = "Number of Volunteers per Country")
 ```
 
@@ -73,7 +75,7 @@ worst
 Now we will make a plot of the variation in the types of trash and how it differs around the world. Read in the continenttypes.csv data frame. This gives the breakdown of the different types of plastic collected on each continet in 2020 and the total number of pick up events.
 
 ```{r echo=FALSE}
-continent <- read.csv("week5/continenttypes.csv")
+continent <- read.csv("continenttypes.csv")
 ```
 
 6. Add a column to this data frame with a variable that captures the existence of different types of plastic trash, controlling for the intensity of the pick-up effort in different continent
