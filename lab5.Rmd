@@ -44,9 +44,10 @@ worst
 
 ```{r echo=FALSE}
 library(tidyverse)
-ggplot(country, aes(x = country, y = volunteers))+
+ggplot(country, aes(x = reorder(country, -volunteers), y = volunteers))+
   geom_col()+
-  theme(axis.text.x = element_text(angle = 90))
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x = "Country", y = "Number of Volunteers", title = "Number of Volunteers per Country")
 ```
 
 3. Notice that there is a lot of variation across countries in the number of volunteers involved in trash pickup. What problem might that cause for the interpretation of your answer to question 1?
@@ -86,7 +87,11 @@ continent$pollution_per_event <- continent$total/continent$events
 Hint: Check out options in the [R graph gallery](https://www.r-graph-gallery.com)
 
 ```{r echo=FALSE}
-
+ggplot(continent, aes(x = continent, y = pollution_per_event, fill = plastic_type))+
+  geom_col()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x = "Continent", y = "Plastic Collected per Clean-Up Event", title = "Plastic Collected per Clean-Up Event by Continent")+
+  scale_fill_discrete(name="Plastic Type")
 ```
 
 8. Try uploading your R markdown file and plot to your Git Hub repository. Don't put your knitted HTML file in Github - these are large files that are not designed to be stored on Github
