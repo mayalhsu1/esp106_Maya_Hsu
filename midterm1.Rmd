@@ -26,12 +26,33 @@ knitr::kable(tab, caption ='Table 1. Variables in "consevationdata.csv"' )
 Read the file `conservationdata.csv`
 
 ```{r}
+knitr::opts_knit$set(root.dir = '/tmp')
+setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
+conservation <- read.csv("conservationdata.csv")
 ```
 
 1. What fraction of species in the dataset are listed under the Endangered Species Act? (2 points)
 
+```{r}
+listed <- subset(conservation, listed == 1)
+nrow(listed)
+```
+**There are 1,617 species listed under the Endangered Species Act (ESA). I created a new data frame that only contains the listed species using the subset function. I then used the nrow() function to see how many species were in this data frame**
 
 2. Show how many (absolute and relative) species there are for each taxonomic group by making a data.frame in which the first column has the taxonomic groups, the second column is the number of species in that group, and the third column is the percentage of all species in that group.
+
+```{r}
+f <- as.factor(conservation$taxon)
+tax_group <- levels(f)
+
+
+Number <- c(nrow(subset(conservation, taxon == "Amphibians")), nrow(subset(conservation, taxon == "Birds")), nrow(subset(conservation, taxon == "Fishes")), nrow(subset(conservation, taxon == "Fungi")), nrow(subset(conservation, taxon == "Invertebrates")), nrow(subset(conservation, taxon == "Mammals")), nrow(subset(conservation, taxon == "Plants")), nrow(subset(conservation, taxon == "Protists")), nrow(subset(conservation, taxon == "Reptiles")))
+
+total <- sum(Number)
+percentage <- Number/total
+table <- cbind(tax_group, Number, percentage)
+```
+**I first created a new vector called tax_group that contains each of the categories in the variable taxon. I then created a vector called Number that has the number of rows for each taxon from the main data table. I ordered the Number vector in the same way that the tax_group variable is ordered. Then I created a vector called percentage that divides the number in each taxon group by the total number of species. I then combined these vectors into one data frame using the cbind function and called the new data frame table**
 
 
 3a) One interesting question is how the conservation status varies between different taxonomic groups. Make a plot showing the relative distribution of conservation status within each taxonomic group. There should be descriptive legend (with words, not with the numeric codes) (3 points)
