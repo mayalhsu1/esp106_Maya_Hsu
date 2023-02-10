@@ -25,7 +25,7 @@ knitr::kable(tab, caption ='Table 1. Variables in "consevationdata.csv"' )
 
 Read the file `conservationdata.csv`
 
-```{r}
+```{r, setup, include=FALSE}
 knitr::opts_knit$set(root.dir = '/tmp')
 setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
 conservation <- read.csv("conservationdata.csv")
@@ -35,22 +35,22 @@ conservation <- read.csv("conservationdata.csv")
 
 ```{r}
 listed <- subset(conservation, listed == 1)
-nrow(listed)
+nrow(listed)/nrow(conservation)
 ```
-**There are 1,617 species listed under the Endangered Species Act (ESA). I created a new data frame that only contains the listed species using the subset function. I then used the nrow() function to see how many species were in this data frame**
+**There are 1,617 species listed under the Endangered Species Act (ESA) and 53,658 total species in the data set, so about 3% of species are listed under te ESA. I created a new data frame called listed that only contains the listed species using the subset function. I then used the nrow() function to see how many species were in the listed and conservation data frames**
 
 2. Show how many (absolute and relative) species there are for each taxonomic group by making a data.frame in which the first column has the taxonomic groups, the second column is the number of species in that group, and the third column is the percentage of all species in that group.
 
 ```{r}
 count <- table(conservation$taxon)
+count
 table <- data.frame(count)
-table$percentage <- table$Freq/nrow(conservation)
 table
+table$percentage <- table$Freq/nrow(conservation)
 colnames(table) <- c("Taxanomic Group","Number of Species","Percentage")
 table
 ```
-**j**
-
+**I created a table that shows the number of species in each taxonomic group and then converted this table into a data frame. I called the new data frame table and created a new column that shows the relative amount of each taxonomic group. I then renamed the columns**
 
 3a) One interesting question is how the conservation status varies between different taxonomic groups. Make a plot showing the relative distribution of conservation status within each taxonomic group. There should be descriptive legend (with words, not with the numeric codes) (3 points)
 
@@ -64,21 +64,21 @@ ggplot(conservation, aes(x = taxon, fill = conservation_status))+
   geom_bar(stat="count")+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
   labs(x = "Taxonomic Group", y = "Number of Species", title = "Conservation Status by Taxonomic Group")+
-  scale_fill_discrete(name="Conservation Status")
+  scale_fill_discrete(name = "Conservation Status", labels = c("Critically Imperiled", "Imperiled", "Vulnerable", "Apparently Secured", "Secure", "Extinct", "Probably Extinct", "Unknown", "NA"))
 ```
 
 
 3b) Based on this graph, what is something we might be concerned about in terms of analyzing the data on conservation status, particularly for fungi and invertebrates? (1 point)
 
-
-
-**Answer:The UNK cateogry stands for unknown. For fungi and invertebrates, a large percentage of the special have unknown conservation status. Moreover, many of these species could be extinct, somewhat endangered, or not enddangered at all. This lack of information will make it difficult to determine which taxonomic group is most vulnerable and should receive the most funding and resources. The large amount of missing data also makes it difficult to analyze overall trends and determine which individual species need the most funding. Overall, analyzing the data will be difficult because there is so much unknown data.** 
+**Answer: For fungi and invertebrates, a large percentage of the species have unknown conservation status. Moreover, many of these species could be extinct, somewhat endangered, or not endangered at all. This lack of information will make it difficult to determine which taxonomic group is most vulnerable and should receive the most funding and resources. The large amount of missing data also makes it difficult to analyze overall trends and determine which individual species need the most funding. Overall, analyzing the data and drawing conclusions will be difficult because there is so much unknown data.** 
 
 Read in the second data file: `spendingdata.csv`
 
 This dataset has a species ID that matches the species ID in the conservation dataset (speciesid), year, and the spending on conservation of that species (expressed in in 2015 dollars, i.e., accounting for inflation)
 
-```{r}
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/tmp')
+setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
 spending <- read.csv("spendingdata.csv")
 ```
 
@@ -88,8 +88,8 @@ spending <- read.csv("spendingdata.csv")
 options(scipen = 999)
 spending_2016 <- subset(spending, Year == 2016)
 ggplot(spending_2016, aes(x = spending))+
-  geom_histogram()
-  labs(x = "Spending (in dollars)", y = "Frequency", title = "Distribution of Spending on Different Species in 2016")
+  geom_histogram()+geom_density(addjust = 0.1)
+  labs(x = "Spending (in dollars)", y = "Species", title = "Distribution of Spending on Different Species in 2016")
 ```
 
 4b) Notice the (very) long right tail on spending data - we spend a lot on a very small number of species. Show the IDs of the 3 species with the most spending in 2016. (2 points)
@@ -100,7 +100,7 @@ most <- spending_2016[1:3,]
 most
 ```
 
-**The IDs of the 3 species with the most spending in 2016 are 1632, 4486, and 1684.**
+**The IDs of the 3 species with the most spending in 2016 were 1632, 4486, and 1684.**
 
 5. Merge in the data from the conservation status data frame to the spending data frame, so that we have information on species names, taxonomic group, and conservation status with the spending data. (2 points); and use that to show the scientific names of the three species identified above.
 
@@ -109,7 +109,6 @@ species <- merge(conservation, spending, by = "speciesid")
 names <- subset(species, speciesid == c(1632, 4486,1684))
 unique(names$speciesname)
 ```
-
 
 Look up these scientific names - what is the common name for these species?
 
@@ -124,19 +123,28 @@ Remember that log(0)=infinity. That means we have to drop observations with zero
 a) Drop the rows where spending == 0 from the data frame and then make a new column with the logarithm (log()) of spending in each year. (2 points)
 
 ```{r}
-species <- subset(species, spending == 0)
 species1 <- subset(species, spending != 0)
 species1$log_spending <- log(species1$spending)
 ```
+
+**I created a new data frame called species1 by subsetting the merged data and taking out the rows in which spending was 0. I then created a new column for the log of spending.**
 
 Optional: Look at the distribution of the logged spending variable and see how it looks different from the plot you made in question 4a
 
 ```{r}
 options(scipen = 999)
+ggplot(species1, aes(x = log_spending))+
+  geom_histogram()
+  labs(x = "Spending (in dollars)", y = "Frequency", title = "Distribution of Spending on Different Species")
+#data from all years
+  
+options(scipen = 999)
 spending1_2016 <- subset(species1, Year == 2016)
 ggplot(spending1_2016, aes(x = log_spending))+
   geom_histogram()
   labs(x = "Spending (in dollars)", y = "Frequency", title = "Distribution of Spending on Different Species in 2016")
+#2016 data
+  
 ```
 
 b) Run a regression of logged spending on taxonomic group and print the summary for the regression below (3 points)
@@ -151,6 +159,6 @@ c) The way to interpret these coefficients are as the fractional difference in s
 Based on your results in b, do we see statistically significant differences in spending between different taxonomic groups? If so, which kinds of species tend to have more spent on them and which have less? (1 points)
 
 
-**Answer: Yes, all the results seem to be statistically significant. Mammals receive the most spending, followed by birds, reptiles, fishes, amphibians, invertebrates, fungi, and then plants.** 
+**Answer: Yes, all the results seem to be statistically significant because all the p-values are less than 0.5. Mammals receive the most spending, followed by birds, reptiles, fishes, amphibians, invertebrates, fungi, and then plants.** 
 
 7. Push your R markdown file to your Github repository (2 points)
