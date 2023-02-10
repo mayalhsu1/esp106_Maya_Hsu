@@ -1,7 +1,9 @@
 ---
 title: "Midterm One"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -25,10 +27,11 @@ knitr::kable(tab, caption ='Table 1. Variables in "consevationdata.csv"' )
 
 Read the file `conservationdata.csv`
 
-```{r, setup, include=FALSE}
+```{r setup}
 knitr::opts_knit$set(root.dir = '/tmp')
 setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
 conservation <- read.csv("conservationdata.csv")
+spending <- read.csv("spendingdata.csv")
 ```
 
 1. What fraction of species in the dataset are listed under the Endangered Species Act? (2 points)
@@ -77,10 +80,7 @@ Read in the second data file: `spendingdata.csv`
 
 This dataset has a species ID that matches the species ID in the conservation dataset (speciesid), year, and the spending on conservation of that species (expressed in in 2015 dollars, i.e., accounting for inflation)
 
-```{r, setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/tmp')
-setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
-spending <- read.csv("spendingdata.csv")
+```{r}
 ```
 
 4a) Make a plot showing the distribution of spending in the year 2016 (3 points)
