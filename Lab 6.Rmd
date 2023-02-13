@@ -79,25 +79,41 @@ plot(wrld, ext=aoi)
 
 #Step 2: plot the whale points. You can use either the "points" method or "plot( , add=TRUE)". The latter is easier for coloring, but you need to tell it not to add a legend.
 
-plot(bluew, add = TRUE)
+colors <- rainbow(length(unique(bluew$ind_ident)))
+colors
+ids <- as.factor(bluew$ind_ident)
+num <- as.integer(ids)
+num
+assign <- colors[ids]
+assign
+plot(bluew, add = TRUE, col = assign, cex = 0.4)
+plot(bluew, add = TRUE, col = as.factor(bluew$ind_ident), cex = 0.4)
 ```
 
 5) make new SpatVectors for each of the following two individuals: "2008CA-Bmu-00825" and "2005CA-Bmu-10821"
 
 ```{r}
 whale1 <- subset(bluew, ind_ident == "2008CA-Bmu-00825", NSE = TRUE)
+whale2 <- subset(bluew, ind_ident == "2005CA-Bmu-10821", NSE = TRUE)
+
+test <- bluew[bluew$ind_ident == "2008CA-Bmu-00825" | bluew$ind_ident == "2005CA-Bmu-10821", ]
 ```
 
 6) Combine these two into one new SpatVector 
 
 ```{r}
-
+whales <- rbind(whale1, whale2)
 ```
 
 
 7) Make a map showing the tracks of these two using different colors. See plot2 on Canvas for an example.
 
 ```{r}
+plot(wrld, ext=aoi)
+plot(whales, add = TRUE, col = as.factor(whales$ind_ident))
+
+plot(whales, "ind_ident", col = c("red", "blue"), add = TRUE)
+
 ```
 
 ## Protected areas
@@ -105,24 +121,29 @@ whale1 <- subset(bluew, ind_ident == "2008CA-Bmu-00825", NSE = TRUE)
 8) The folder MPAs has a shapefile in it with polygons for Marine Protected Areas within the United States. This file was extracted from a file with all protected areas in the US [source](https://www.protectedplanet.net). Read the MPA shapefile. 
 
 ```{r}
-mpa <- ___________
+mpa <- vect("MPAs/MPAS.shp")
 ```
 
 9) Now we will focus on just the US west coast. You can use the following longitude and latitude extent: xmin=-128, xmax=-115, ymin=32, ymax=40. Get just the MPAs on the US west coast by cropping the MPA dataset to this extent.
 
 ```{r}
 #Hint: use the crop() function
-mpa <- _______________
+extent <- ext(-128, -115, 32, 40)
+mpa <- crop(mpa, extent)
 ```
 
 10) Find the fraction of the blue whale observations that are in one of the west coast MPAs. You can use `is.related`
 
 ```{r}
+sum(is.related(bluew, mpa, "within"))/length(bluew)
 ```
+
+**About 16%**
 
 11) Find what fraction of blue whales in the dataset spend at least some time in one of these west coast MPAs. 
 
 ```{r}
+sum(is.related(bluew, mpa, "within"))/length(bluew)
 ```
 
 
