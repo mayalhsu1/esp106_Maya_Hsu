@@ -7,10 +7,6 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE}
-library(knitr)
-```
-
 In this midterm we will analyze some data on the conservation status of species in North America and spending under the Endangered Species Act. 
 
 Answer the following questions by using chunks of R code. Comment on what your code does. Make sure to add informative axis titles and, where appropriate, units to your answers. Upload the R markdown file and knitted output to Canvas. 
@@ -28,6 +24,7 @@ knitr::kable(tab, caption ='Table 1. Variables in "consevationdata.csv"' )
 Read the file `conservationdata.csv`
 
 ```{r setup}
+library(knitr)
 knitr::opts_knit$set(root.dir = '/tmp')
 setwd("/Users/mayahsu/Desktop/school/environmental data science/midterm")
 conservation <- read.csv("conservationdata.csv")
@@ -81,6 +78,7 @@ Read in the second data file: `spendingdata.csv`
 This dataset has a species ID that matches the species ID in the conservation dataset (speciesid), year, and the spending on conservation of that species (expressed in in 2015 dollars, i.e., accounting for inflation)
 
 ```{r}
+#already read in data
 ```
 
 4a) Make a plot showing the distribution of spending in the year 2016 (3 points)
