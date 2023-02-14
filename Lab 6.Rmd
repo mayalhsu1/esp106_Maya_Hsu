@@ -135,6 +135,8 @@ mpa <- crop(mpa, extent)
 10) Find the fraction of the blue whale observations that are in one of the west coast MPAs. You can use `is.related`
 
 ```{r}
+observ <- is.related(bluew, mpa, "within")
+
 sum(is.related(bluew, mpa, "within"))/length(bluew)
 ```
 
@@ -144,6 +146,12 @@ sum(is.related(bluew, mpa, "within"))/length(bluew)
 
 ```{r}
 sum(is.related(bluew, mpa, "within"))/length(bluew)
+mpa_sub <- subset(mpa, which(observ == TRUE))
+
+sub <- bluew[observ]
+which(observ == TRUE)
+
+is.related(bluew, mpa, "within", pairs = TRUE)
 ```
 
 
