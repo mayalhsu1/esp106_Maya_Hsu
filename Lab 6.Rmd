@@ -87,6 +87,7 @@ num
 assign <- colors[ids]
 assign
 plot(bluew, add = TRUE, col = assign, cex = 0.4)
+
 plot(bluew, add = TRUE, col = as.factor(bluew$ind_ident), cex = 0.4)
 ```
 
@@ -128,14 +129,14 @@ mpa <- vect("MPAs/MPAS.shp")
 
 ```{r}
 #Hint: use the crop() function
-extent <- ext(-128, -115, 32, 40)
+e <- ext(-128, -115, 32, 40)
 mpa <- crop(mpa, extent)
 ```
 
 10) Find the fraction of the blue whale observations that are in one of the west coast MPAs. You can use `is.related`
 
 ```{r}
-observ <- is.related(bluew, mpa, "within")
+observ <- is.related(bluew, mpa, "intersects")
 
 sum(is.related(bluew, mpa, "within"))/length(bluew)
 ```
@@ -145,39 +146,41 @@ sum(is.related(bluew, mpa, "within"))/length(bluew)
 11) Find what fraction of blue whales in the dataset spend at least some time in one of these west coast MPAs. 
 
 ```{r}
-sum(is.related(bluew, mpa, "within"))/length(bluew)
-mpa_sub <- subset(mpa, which(observ == TRUE))
-
-sub <- bluew[observ]
 which(observ == TRUE)
-
-is.related(bluew, mpa, "within", pairs = TRUE)
+sub <- bluew[observ]
+length((unique(sub$ind_ident)))/length((unique(bluew$ind_ident)))
 ```
 
+**84%**
 
 12. Create a raster with counts of blue whale observations along the California coast. Use the spatial extent we used for the mpa data (question 8) and use a spatial resolution of 1/6th of a degree. First create an empty SpatRaster. Then use `rasterize`
 
 ```{r}
-r <- rast(  , res=1/6)
-r <- rasterize(   , fun="count")
+r <- rast( ,res=1/6, extent = e)
+r <- rasterize(bluew, r, fun="count")
 r
 ```
 
 13. Make a map to show the counts and the MPAs and land areas. Plot 3 on Canvas shows you the plot you are aiming for. 
 
 ```{r}
-
+plot(wrld, ext = e, col = "grey")
+plot(r, add = TRUE) 
+lines(mpa, col = "blue")
 ```
 
 14) Using the country boundaries, compute for the raster with the number of observations, the distance to the coast
 
 ```{r}
-
+d <- distance(r, wrld, unit = "km")
+plot(d)
 ```
 
 15) For each blue whale observation, find the distance to the coast based on this raster (use "extract"). Make a histogram of the distribution. 
 
 ```{r}
-
+dist <- extract(d, bluew)
+dist
+hist(dist$layer, na.rm = TRUE)
 ```
 
