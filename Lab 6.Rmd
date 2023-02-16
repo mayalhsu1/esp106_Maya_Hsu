@@ -164,8 +164,8 @@ r
 13. Make a map to show the counts and the MPAs and land areas. Plot 3 on Canvas shows you the plot you are aiming for. 
 
 ```{r}
-plot(wrld, ext = e, col = "grey")
-plot(r, add = TRUE) 
+plot(r)
+plot(wrld, ext = e, col = "grey", add = TRUE)
 lines(mpa, col = "blue")
 ```
 
@@ -173,6 +173,8 @@ lines(mpa, col = "blue")
 
 ```{r}
 d <- distance(r, wrld, unit = "km")
+
+s <- distance(bluew, wrld, unit = "km")
 plot(d)
 ```
 
@@ -181,6 +183,14 @@ plot(d)
 ```{r}
 dist <- extract(d, bluew)
 dist
-hist(dist$layer, na.rm = TRUE)
+hist(dist$layer)
+
+xy = crds(bluew)[1:2,]
+i = cellFromXY(d, as.matrix(xy))
+d[i]
+dist[1:2,]
+di <- distance(bluew, wrld)
+plot(wrld, ext = e)
+points(bluew)
 ```
 
