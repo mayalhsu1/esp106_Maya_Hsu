@@ -1,7 +1,9 @@
 ---
 title: "Lab 6"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -84,7 +86,7 @@ colors
 ids <- as.factor(bluew$ind_ident) #making individual whales into factors 
 assign <- colors[ids] #assigning a color to each factor
 assign
-plot(bluew, add = TRUE, col = assign, cex = 0.4). #creating a plot in which each whale has its own color
+plot(bluew, add = TRUE, col = assign, cex = 0.4) #creating a plot in which each whale has its own color
 
 plot(bluew, add = TRUE, col = as.factor(bluew$ind_ident), cex = 0.4)
 title(main = "North American West Coast Whale Sightings") #simplified version of the code above, factorizing whale id variable and assigning a color to each whale 
