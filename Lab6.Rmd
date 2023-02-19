@@ -76,7 +76,11 @@ Refine the below. Plot 1 on canvas shows you what you can aim for.
 # the area of interest
 aoi <- ext(bluew) + 2
 
-plot(wrld, ext=aoi)
+plot(wrld, ext=aoi, col = "grey")
+rect(par("usr")[1], par("usr")[3],
+     par("usr")[2], par("usr")[4],col = "aliceblue")
+par(new = TRUE)
+plot(wrld, ext=aoi, col = "grey")
 
 
 #Step 2: plot the whale points. You can use either the "points" method or "plot( , add=TRUE)". The latter is easier for coloring, but you need to tell it not to add a legend.
@@ -111,7 +115,11 @@ whales <- rbind(whale1, whale2) #using rbind to bind rowns of whale1 and whale2 
 7) Make a map showing the tracks of these two using different colors. See plot2 on Canvas for an example.
 
 ```{r}
-plot(wrld, ext=aoi)
+plot(wrld, ext=aoi, col = "grey")
+rect(par("usr")[1], par("usr")[3],
+     par("usr")[2], par("usr")[4],col = "aliceblue")
+par(new = TRUE)
+plot(wrld, ext=aoi, col = "grey")
 plot(whales, add = TRUE, col = as.factor(whales$ind_ident))
 
 plot(whales, "ind_ident", col = c("red", "blue"), add = TRUE, legend = FALSE) #manually choosing which colors to use
@@ -165,7 +173,12 @@ plot(r) #plotting r shows where whale observations occur at grid-cell level
 13. Make a map to show the counts and the MPAs and land areas. Plot 3 on Canvas shows you the plot you are aiming for. 
 
 ```{r}
-plot(r)
+plot(wrld, ext=e, col = "grey")
+rect(par("usr")[1], par("usr")[3],
+     par("usr")[2], par("usr")[4],col = "aliceblue")
+par(new = TRUE)
+plot(r, add = TRUE)
+plot(wrld, ext=aoi, col = "grey", add = TRUE)
 plot(wrld, ext = e, col = "grey", add = TRUE)
 lines(mpa, col = "blue")
 ```
@@ -174,8 +187,6 @@ lines(mpa, col = "blue")
 
 ```{r}
 d <- distance(r, wrld, unit = "km") #finding the distance from each cell in r to land
-
-s <- distance(bluew, wrld, unit = "km") #finding distance from each whale observation to land
 plot(d)
 ```
 
