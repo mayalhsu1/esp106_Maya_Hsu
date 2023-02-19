@@ -48,8 +48,8 @@ This is a set of point location for GPS tagged blue whales the eastern north Pac
 2) How many observations are there in this dataset? And how many individual whales are tracked? 
 
 ```{r}
-length(bluew)
-length(unique(bluew$ind_ident))
+length(bluew) #length of spatial vector gives number of observations
+length(unique(bluew$ind_ident)) #unique ind_indent gives number of unique ids/whales
 ```
 
 **There are 15,545 observations and 141 individual whales**
@@ -79,31 +79,30 @@ plot(wrld, ext=aoi)
 
 #Step 2: plot the whale points. You can use either the "points" method or "plot( , add=TRUE)". The latter is easier for coloring, but you need to tell it not to add a legend.
 
-colors <- rainbow(length(unique(bluew$ind_ident)))
+colors <- rainbow(length(unique(bluew$ind_ident))) #generating colors so that each whale has its own color 
 colors
-ids <- as.factor(bluew$ind_ident)
-num <- as.integer(ids)
-num
-assign <- colors[ids]
+ids <- as.factor(bluew$ind_ident) #making individual whales into factors 
+assign <- colors[ids] #assigning a color to each factor
 assign
-plot(bluew, add = TRUE, col = assign, cex = 0.4)
+plot(bluew, add = TRUE, col = assign, cex = 0.4). #creating a plot in which each whale has its own color
 
 plot(bluew, add = TRUE, col = as.factor(bluew$ind_ident), cex = 0.4)
+title(main = "North American West Coast Whale Sightings") #simplified version of the code above, factorizing whale id variable and assigning a color to each whale 
 ```
 
 5) make new SpatVectors for each of the following two individuals: "2008CA-Bmu-00825" and "2005CA-Bmu-10821"
 
 ```{r}
-whale1 <- subset(bluew, ind_ident == "2008CA-Bmu-00825", NSE = TRUE)
+whale1 <- subset(bluew, ind_ident == "2008CA-Bmu-00825", NSE = TRUE) #subsetting spatial vector
 whale2 <- subset(bluew, ind_ident == "2005CA-Bmu-10821", NSE = TRUE)
 
-test <- bluew[bluew$ind_ident == "2008CA-Bmu-00825" | bluew$ind_ident == "2005CA-Bmu-10821", ]
+test <- bluew[bluew$ind_ident == "2008CA-Bmu-00825" | bluew$ind_ident == "2005CA-Bmu-10821", ] #combining questions 5 and 6 by subsetting for both whales in the same line of coded
 ```
 
 6) Combine these two into one new SpatVector 
 
 ```{r}
-whales <- rbind(whale1, whale2)
+whales <- rbind(whale1, whale2) #using rbind to bind rowns of whale1 and whale2 into one spacial vector
 ```
 
 
@@ -113,7 +112,7 @@ whales <- rbind(whale1, whale2)
 plot(wrld, ext=aoi)
 plot(whales, add = TRUE, col = as.factor(whales$ind_ident))
 
-plot(whales, "ind_ident", col = c("red", "blue"), add = TRUE)
+plot(whales, "ind_ident", col = c("red", "blue"), add = TRUE, legend = FALSE) #manually choosing which colors to use
 
 ```
 
@@ -130,35 +129,35 @@ mpa <- vect("MPAs/MPAS.shp")
 ```{r}
 #Hint: use the crop() function
 e <- ext(-128, -115, 32, 40)
-mpa <- crop(mpa, extent)
+mpa <- crop(mpa, e)
 ```
 
 10) Find the fraction of the blue whale observations that are in one of the west coast MPAs. You can use `is.related`
 
 ```{r}
-observ <- is.related(bluew, mpa, "intersects")
+observ <- is.related(bluew, mpa, "intersects") #creating an object called observ that shows which whale observations fall within (or on) the boundaries of the west coast MPAs, true means the whale falls within the MPAs 
 
-sum(is.related(bluew, mpa, "within"))/length(bluew)
+sum(observ)/length(bluew) #taking the sum of observ gives the number of observations in one of the west coast MPAs since true values equal one, dividing sum of observ by total number of observations to get percentage of obsercations in a west coast MPA 
 ```
 
-**About 16%**
+**About 16%. 0.016**
 
 11) Find what fraction of blue whales in the dataset spend at least some time in one of these west coast MPAs. 
 
 ```{r}
-which(observ == TRUE)
-sub <- bluew[observ]
-length((unique(sub$ind_ident)))/length((unique(bluew$ind_ident)))
+sub <- bluew[observ] #creating a new spacial vector with only the observations that fall within a west coast mpa
+length((unique(sub$ind_ident)))/length((unique(bluew$ind_ident))) #finding the unique number of whale ids in the subsetted spatial vector and dividing by the total number of whales to find the percentage of whales that spend at least some time in a west coast MPA
 ```
 
-**84%**
+**About 84%. 0.84**
 
 12. Create a raster with counts of blue whale observations along the California coast. Use the spatial extent we used for the mpa data (question 8) and use a spatial resolution of 1/6th of a degree. First create an empty SpatRaster. Then use `rasterize`
 
 ```{r}
-r <- rast( ,res=1/6, extent = e)
-r <- rasterize(bluew, r, fun="count")
+r <- rast( ,res=1/6, extent = e) #empty raster with extent e
+r <- rasterize(bluew, r, fun="count") #raster with blue whale data
 r
+plot(r) #plotting r shows where whale observations occur at grid-cell level
 ```
 
 13. Make a map to show the counts and the MPAs and land areas. Plot 3 on Canvas shows you the plot you are aiming for. 
@@ -172,9 +171,9 @@ lines(mpa, col = "blue")
 14) Using the country boundaries, compute for the raster with the number of observations, the distance to the coast
 
 ```{r}
-d <- distance(r, wrld, unit = "km")
+d <- distance(r, wrld, unit = "km") #finding the distance from each cell in r to land
 
-s <- distance(bluew, wrld, unit = "km")
+s <- distance(bluew, wrld, unit = "km") #finding distance from each whale observation to land
 plot(d)
 ```
 
@@ -183,14 +182,21 @@ plot(d)
 ```{r}
 dist <- extract(d, bluew)
 dist
-hist(dist$layer)
+dist_layer <- dist$layer
+hist(dist_layer, main = "Distance Between Whale Sightings\n and Coast", xlab = "Kilometers", ylab = "Frequency")
 
-xy = crds(bluew)[1:2,]
-i = cellFromXY(d, as.matrix(xy))
-d[i]
-dist[1:2,]
+library(tidyverse)
+ggplot(dist, aes(x = layer))+
+  geom_histogram(bins=9)+ ggtitle("Distance Between Whale Sightings\n and Coast")+ xlab("Distance (km)") + ylab("Frequency")
+#I plotted using ggplot because I was having trouble with the axis labels in base r
+
+xy = crds(bluew)[1:2,] #getting coordinates of first 2 whale sightings
+i = cellFromXY(d, as.matrix(xy)) #getting cell numbers for first 2 whale sightings
+d[i] #finding length from coast for first 2 whale sightings
+dist[1:2,] #finding length from coast for first 2 whale sightings
 di <- distance(bluew, wrld)
 plot(wrld, ext = e)
 points(bluew)
+#behind the scenes of how extract and distance functions work, matching whale observations to raster cells using coordinates 
 ```
 
