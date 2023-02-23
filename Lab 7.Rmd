@@ -31,7 +31,6 @@ The first part of the lab will compare modeled and observed climate data for maj
 
 ```{r}
 library(terra)
-names <- list.files("week 7/Data/Climate Model Data_Historic", patterns = "nc$", full.name = TRUE)
 historic <- rast("week 7/Data/Climate Model Data_Historic/b.e11.B20TRC5CNBDRD.f09_g16.002.cam.h0.TREFHT.192001-200512.nc", "TREFHT")
 ```
 
@@ -113,7 +112,8 @@ city_sim$time <- time(historic_subset, format = "years")
 ```{r}
 #Hint: you want to use the first 10 columns (cities) to pivot (cols argument in the pivot_longer function). Use the values_to argument to name the temperature data column either "observed" or "simulated".
 
-city_obs <- ________
+library(tidyr)
+city_obs <- pivot_longer(city_obs, cols = topnames, names_to = c("Year", "City", "Observed"))
 city_sim <- ________
 
 ```
