@@ -1,7 +1,9 @@
 ---
 title: "Lab 7_Solutions"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -18,12 +20,12 @@ unzip("week 7/Data.zip")
 
 In this lab we will practice working with raster data, in this case in the context of climate models. I have given you 4 sets of data:
 
-1. Climate Model Data_Historic - this is a NetCDF file with output from a climate model. Data is monthly average air temperature for 1920-2005
-2. Climate Model Data_Future - this is a NetCDF file with climate model output for the period 2006-2080
-3. Observed Temp Data - this is gridded data based on weather station and satellite data. Data is monthly for 1991-2000
-4. Population data - gridded counts of population for a number of years
+1.  Climate Model Data_Historic - this is a NetCDF file with output from a climate model. Data is monthly average air temperature for 1920-2005
+2.  Climate Model Data_Future - this is a NetCDF file with climate model output for the period 2006-2080
+3.  Observed Temp Data - this is gridded data based on weather station and satellite data. Data is monthly for 1991-2000
+4.  Population data - gridded counts of population for a number of years
 
-The first part of the lab will compare modeled and observed climate data for major cities around the world. The second part of the lab will combine the population data and future climate data to project future changes in global temperature. 
+The first part of the lab will compare modeled and observed climate data for major cities around the world. The second part of the lab will combine the population data and future climate data to project future changes in global temperature.
 
 #Part 1
 
@@ -48,7 +50,6 @@ historic <- rotate(historic) #extent changed from 0 to 360 to -180 to 180, check
 #Hint 2: The function order() will give you the index value corresponding to the ascending or descending numerical order of a column
 
 library(rnaturalearth)
-rnaturalearth::ne_download()
 cities <- vect(ne_download(scale = 110, "populated_places", returnclass = "sf")) #creating a spatial vector of cities
 as.numeric(cities$POP2020) #changing population to a numeric value
 pop20 <- cities[order(cities$POP2020, decreasing = TRUE)] #ordering the spatial vector from most to least populated cities
@@ -85,7 +86,7 @@ historic_subset <- subset(historic, time_index >= 1991 & time_index <= 2000) #su
 historic_subset <- historic_subset - 273.15 #changing units to celsius
 ```
 
-4. Use terra::extract() to produce two data-frames, one with observed and one with modeled temperature values for each city. Change the units of the modeled data so they match the units of the observed data.
+4.  Use terra::extract() to produce two data-frames, one with observed and one with modeled temperature values for each city. Change the units of the modeled data so they match the units of the observed data.
 
 ```{r}
 city_obs <- extract(observed, pop20, ID = FALSE) #removing the ID row so that the number of entries will be the same as for the time data later on
@@ -162,7 +163,7 @@ future <- rotate(future) #rotating raster to -180 to 180, checking extent before
 future <- future - 273.15 #changing units to Celsius
 ```
 
-6b. Compute the projected _annual_ trend in global climate. Use `tapp` for this temporal aggregation.
+6b. Compute the projected *annual* trend in global climate. Use `tapp` for this temporal aggregation.
 
 ```{r}
 predicted <- tapp(future, index = "years", fun = "mean") #taking the average of the modeled data for each year
@@ -187,7 +188,6 @@ dim(future)
 dim(population2020)
 ```
 
-
 8b. To fix this problem we can aggregate the population raster up to the resolution of the climate model using the aggregate() function. The population data you have is the population count (i.e. number of people in each grid cell). What function should we use to aggregate to larger grid cells? What function would we use instead if we had population density data instead of population count?
 
 **Answer: To aggregate larger grid cells with population count, use sum. To aggregate population denisty data, use mean.**
@@ -207,24 +207,23 @@ global(population2020, "sum", na.rm = TRUE)
 
 **Answer: 7757982600**
 
-9a. Now we will use the population data to do a weighted averaging of the projected temperature data, to get the monthly temperature experienced by the average person between 2006 and 2080. 
+9a. Now we will use the population data to do a weighted averaging of the projected temperature data, to get the monthly temperature experienced by the average person between 2006 and 2080.
 
-One problem is that even after the aggregation, the grids of the population data still don't quite match. Use terra::resample() to resample the aggregated population data to the climate model grid. 
+One problem is that even after the aggregation, the grids of the population data still don't quite match. Use terra::resample() to resample the aggregated population data to the climate model grid.
 
 ```{r}
 pop2020 <- terra::resample(population2020, future)
 dim(pop2020)
 ```
 
-9b. Now we can use the population raster to do a weighted average of the climate model data. Use the global() function to calculate both the global and and the population-weighted average temperature for each year. 
+9b. Now we can use the population raster to do a weighted average of the climate model data. Use the global() function to calculate both the global and and the population-weighted average temperature for each year.
 
 ```{r}
 temp <- global(predicted, "mean", na.rm = TRUE) #using the projected annual temperature data from 6b
 weighted_temp <- global(predicted, "mean", weights = pop2020, na.rm = TRUE) #weighting by population so that the average value reflects where people live (more weight given to places in which more people live), result should reflect temperature experienced by average person
 ```
 
-
-Make a graph showing the projected annual trend in global climate. On the same graph show the temperature trend for the entire world, and weighted by population. 
+Make a graph showing the projected annual trend in global climate. On the same graph show the temperature trend for the entire world, and weighted by population.
 
 ```{r}
 range <- unique(time(future, format = "years")) #creating an object with a list of years
@@ -240,5 +239,3 @@ ggplot(projected)+
   labs(title = "Projected Annual Global Temperature", x = "Year", y = "Temperature (Celsius)")+
   scale_color_identity(guide = "legend", breaks = c("black", "blue"), name = NULL, labels = c("Weighted by Population", "Not Weighted by Population"))
 ```
-
-
