@@ -232,13 +232,13 @@ range <- unique(time(future, format = "years")) #creating an object with a list 
 temp$year <- range #creating a column for year
 weighted_temp$year <- range
 
-projected <- merge(temp, weighted_temp, by = "year")
+projected <- merge(temp, weighted_temp, by = "year") #merging the data into one dataframe 
 
-plot(temp$year, temp$mean, ylim = c(0, 27), main = "Projected Annual Global Temperature Trends", xlab = "Year", ylab = "Temperature (Celsius)")
-points(weighted_temp$year, weighted_temp$weighted_mean, col = "blue", pch = 1)
-legend("topright", legend = c("Temperature Weighted by Population", "Population not Weighted by Population"), col = c("blue", "black"), pch = c(1, 1), cex = 0.75)
-
-
+ggplot(projected)+
+  geom_point(mapping = aes(x = year, y = mean, color = "blue"))+
+  geom_point(mapping = aes(x = year, y = weighted_mean, color = "black"))+
+  labs(title = "Projected Annual Global Temperature Trends", x = "Year", y = "Temperature (Celsius)")+
+  scale_color_identity(guide = "legend", breaks = c("black", "blue"), name = NULL, labels = c("Temperature Weighted by Population", "Temperature not Weighted by Population"))
 ```
 
 
