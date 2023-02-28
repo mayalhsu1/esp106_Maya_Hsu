@@ -37,7 +37,7 @@ historic <- rast("week 7/Data/Climate Model Data_Historic/b.e11.B20TRC5CNBDRD.f0
 1b. Use ext() to see the longitude and latitude range of the SpatRaster you created. Note that the longitude goes form 0 to 360 (ish) instead of the more typical -180 to 180. This will cause a problem later on so use the rotate() function to change the longitude coordinates. Use extent again on the rotated object to check the longitude goes from -180 to 180 (ish)
 
 ```{r}
-historic <- rotate(historic) #extent changed from 0 to 360 to -180 to 180
+historic <- rotate(historic) #extent changed from 0 to 360 to -180 to 180, checked extent using extent(historic) before and after rotating
 ```
 
 2a. Use `rnaturalearth::ne_download()` function to get a sf object of major cities ("populated_places"). Use `vect` to coerce this to a SpatVector, and subset it to get just the 10 most populous cities based on 2020 population (POP2020 column)
@@ -61,10 +61,9 @@ pop20$NAME[1:10] #getting the names of the top 10 most populated cities
 
 ```{r}
 time_index <- time(historic, format = "days") #creating a time index with the date of each entry from the historic climate model
-historic_1920 <- subset(historic, time_index == "1920-02-01") #creating a subsetted spatial rastor for February 1920 because there is no data for January 1920
+historic_1920 <- subset(historic, (time(historic, format = "days") == "1920-02-01")) #creating a subsetted spatial rastor for February 1920 because there is no data for January 1920
 plot(historic_1920, main = "Temperature Data for the Most Populated Cities in\nFebruary 1920 (in Kelvin)")
 plot(pop20, add = TRUE)
-
 ```
 
 2c. What about the plot gives you confidence this is actually showing temperature data from a January? What are the units of the temperature data?
@@ -81,16 +80,15 @@ observed <- rast("/Users/mayahsu/Desktop/school/environmental data science/week 
 
 ```{r}
 # hint: have a look at ?terra::time to see how to get years
-time_index1 <- time(historic, format = "years") #creating a time index for the year of each entry in the temperature data
-d <- time_index >= 1991 & time_index <= 2000
-historic_subset <- subset(historic, d) #creating a subset with years between 1991 and 2000 (including those years)
-historic_subset <- historic_subset - 273.15 #changing the units to celsius
+time_index <- time(historic, format = "years") #creating a time index with the year of each entry from the historic climate model
+historic_subset <- subset(historic, time_index >= 1991 & time_index <= 2000) #subsetting for years between (and including) 1991 and 2000, when time_index is TRUE those observations will be selected
+historic_subset <- historic_subset - 273.15 #changing units to celsius
 ```
 
 4. Use terra::extract() to produce two data-frames, one with observed and one with modeled temperature values for each city. Change the units of the modeled data so they match the units of the observed data.
 
 ```{r}
-city_obs <- extract(observed, pop20, ID = FALSE)
+city_obs <- extract(observed, pop20, ID = FALSE) #removing the ID row so that the number of entries will be the same as for the time data later on
 city_sim <- extract(historic_subset, pop20, ID = FALSE)
 ```
 
@@ -99,11 +97,11 @@ We have to do a bit of data-wrangling to compare modeled and observed temperatur
 5a. Add a column to both data-frames with the names of the cities using the NAME column from the city data frame
 
 ```{r}
-city_obs <- data.frame(t(city_obs))
+city_obs <- data.frame(t(city_obs)) #transposing data
 city_sim <- data.frame(t(city_sim))
-colnames(city_obs) <- topnames
+colnames(city_obs) <- topnames #changing to column names to the top 10 most populated cities
 colnames(city_sim) <- topnames
-city_obs$time <- time(observed, format = "days")
+city_obs$time <- time(observed, format = "days") #adding a column for date
 city_sim$time <- time(historic_subset, format = "days")
 ```
 
@@ -113,8 +111,8 @@ city_sim$time <- time(historic_subset, format = "days")
 #Hint: you want to use the first 10 columns (cities) to pivot (cols argument in the pivot_longer function). Use the values_to argument to name the temperature data column either "observed" or "simulated".
 
 library(tidyr)
-extract <- terra::extract
-city_obs <- pivot_longer(city_obs, cols = all_of(topnames))
+extract <- terra::extract #setting extract function to terra package
+city_obs <- pivot_longer(city_obs, cols = all_of(topnames)) #pivoting top column so that each entry is a row 
 colnames(city_obs) <- c("Date", "City", "Observed")
 city_sim <- pivot_longer(city_sim, cols = all_of(topnames))
 colnames(city_sim) <- c("Date", "City", "Simulated")
@@ -127,7 +125,7 @@ To merge the two data frames together, first we need to "chop off" the last two 
 change the variable "time" from Date to "yearmon" (character)
 
 ```{r}
-city_sim$Date <- substr(city_sim$Date, 1, 7)
+city_sim$Date <- substr(city_sim$Date, 1, 7) #by only taking the first through seventh characters of the date, we are left with the year and the month
 
 city_obs$Date <- substr(city_obs$Date, 1, 7)
 ```
@@ -146,7 +144,9 @@ merged <- merge(city_sim, city_obs, by = c("City", "Date"))
 library(ggplot2)
 ggplot(merged, aes(x = Observed, y = Simulated, col = City))+
   geom_point()+
-  geom_line()
+  geom_abline(slope = 1)+
+  labs(x = "Observed Temperature (Celsius)", y = "Modeled Temperature (Celsius)", title = "Modeled vs. Observed Temperatures for\nTen Most Populated Cities from 1991 to 2000")
+#the distance between the line and each point represents the difference between modeled and observed temperatures
 ```
 
 #Part 2
@@ -158,16 +158,14 @@ In the second part of the lab, we will use projections of future temperature cha
 ```{r}
 future <- rast("week 7/Data/Climate Model Data_Future/b.e11.BRCP85C5CNBDRD.f09_g16.002.cam.h0.TREFHT.200601-208012.nc", "TREFHT")
 
-ext(future)
-future <- rotate(future)
-ext(future)
-future <- future - 273.15
+future <- rotate(future) #rotating raster to -180 to 180, checking extent before and after rotation using extent(future)
+future <- future - 273.15 #changing units to Celsius
 ```
 
 6b. Compute the projected _annual_ trend in global climate. Use `tapp` for this temporal aggregation.
 
 ```{r}
-predicted <- tapp(future, index = "years", fun = "mean")
+predicted <- tapp(future, index = "years", fun = "mean") #taking the average of the modeled data for each year
 ```
 
 7a. Read in the netCDF data on population in the "Population" directory as a SpatRaster. (There is only one variable in this netCDF, so you do not need to specify the variable name this time). This is gridded population count at 15 arc minute resolution.
@@ -179,28 +177,26 @@ population <- rast("week 7/Data/Population/gpw_v4_population_count_adjusted_rev1
 7b. We want only the 5th layer in this SpatRaster, which corresponds to population count in 2020. (Note - I know this from some associated files that came with the netCDF file. Take a look at the csv file in the directory to see this documentation). Pull out just the population in 2020.
 
 ```{r}
-population2020 <- population[[5]]
+population2020 <- population[[5]] #indexing for the fifth layer of the raster
 ```
 
 8a. Now we want to eventually match the population grid to the projected temperature grid. But the problem is that the grid size of the climate model is much larger than the grid size of the population data. How many rows and columns does the climate model data have? And how many rows and columns does the population data have? Use code to show that.
 
 ```{r}
-print(nrow(future))
-print(ncol(future))
-print(nrow(population2020))
-print(ncol(population2020))
+dim(future)
+dim(population2020)
 ```
 
 
 8b. To fix this problem we can aggregate the population raster up to the resolution of the climate model using the aggregate() function. The population data you have is the population count (i.e. number of people in each grid cell). What function should we use to aggregate to larger grid cells? What function would we use instead if we had population density data instead of population count?
 
-**Answer:**
-sum / mean
+**Answer: To aggregate larger grid cells with population count, use sum. To aggregate population denisty data, use mean.**
 
 8c. Aggregate the population data to a higher level of resolution, as close as possible to the climate model data.
 
 ```{r}
-population2020 <- aggregate(population2020, fact = c(4, 5), fun = "sum")
+popagg <- aggregate(population2020, fact = c(4, 5), fun = "sum") #the values after fact tell the function by what factor to aggregate the rows and columns in popagg
+dim(popagg)
 ```
 
 8d. If everything has gone according to plan, we would expect that summing up all the cells in the population raster should give us something close to the current population on the planet. Calculate that sum from your aggregated population data and compare to the total population today.
@@ -209,7 +205,7 @@ population2020 <- aggregate(population2020, fact = c(4, 5), fun = "sum")
 global(population2020, "sum", na.rm = TRUE)
 ```
 
-**Answer: 6322379306**
+**Answer: 7757982600**
 
 9a. Now we will use the population data to do a weighted averaging of the projected temperature data, to get the monthly temperature experienced by the average person between 2006 and 2080. 
 
@@ -217,27 +213,32 @@ One problem is that even after the aggregation, the grids of the population data
 
 ```{r}
 pop2020 <- terra::resample(population2020, future)
+dim(pop2020)
 ```
 
 9b. Now we can use the population raster to do a weighted average of the climate model data. Use the global() function to calculate both the global and and the population-weighted average temperature for each year. 
 
 ```{r}
-temp <- global(predicted, "mean", na.rm = TRUE)
-weighted_temp <- global(predicted, "mean", weights = pop2020, na.rm = TRUE)
+temp <- global(predicted, "mean", na.rm = TRUE) #using the projected annual temperature data from 6b
+weighted_temp <- global(predicted, "mean", weights = pop2020, na.rm = TRUE) #weighting by population so that the average value reflects where people live (more weight given to places in which more people live), result should reflect temperature experienced by average person
 ```
 
 
 Make a graph showing the projected annual trend in global climate. On the same graph show the temperature trend for the entire world, and weighted by population. 
 
 ```{r}
-temp$year <- 2006:2081
-weighted_temp$year <- 2006:2081
+range <- unique(time(future, format = "years")) #creating an object with a list of years
 
-ggplot(temp, aes(x = year, y = mean))+
-  geom_point()
+temp$year <- range #creating a column for year
+weighted_temp$year <- range
 
-plot(temp$year, temp$mean, ylim = c(0, 27))
-points(weighted_temp$year, weighted_temp$weighted_mean, col = "green")
+projected <- merge(temp, weighted_temp, by = "year")
+
+plot(temp$year, temp$mean, ylim = c(0, 27), main = "Projected Annual Global Temperature Trends", xlab = "Year", ylab = "Temperature (Celsius)")
+points(weighted_temp$year, weighted_temp$weighted_mean, col = "blue", pch = 1)
+legend("topright", legend = c("Temperature Weighted by Population", "Population not Weighted by Population"), col = c("blue", "black"), pch = c(1, 1), cex = 0.75)
+
+
 ```
 
 
