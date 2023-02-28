@@ -237,8 +237,8 @@ projected <- merge(temp, weighted_temp, by = "year") #merging the data into one 
 ggplot(projected)+
   geom_point(mapping = aes(x = year, y = mean, color = "blue"))+
   geom_point(mapping = aes(x = year, y = weighted_mean, color = "black"))+
-  labs(title = "Projected Annual Global Temperature Trends", x = "Year", y = "Temperature (Celsius)")+
-  scale_color_identity(guide = "legend", breaks = c("black", "blue"), name = NULL, labels = c("Temperature Weighted by Population", "Temperature not Weighted by Population"))
+  labs(title = "Projected Annual Global Temperature", x = "Year", y = "Temperature (Celsius)")+
+  scale_color_identity(guide = "legend", breaks = c("black", "blue"), name = NULL, labels = c("Weighted by Population", "Not Weighted by Population"))
 ```
 
 
