@@ -112,7 +112,7 @@ Q6a) Use graphics::barplot, make sure to include a legend.  (4 points)
 barplot <- graphics::barplot
 m <- rbind(fractions$Urban, fractions$Cropland, fractions$Grassland, fractions$Forest, fractions$other) #creating a matrix of land type where each column is a different province and the proportion of different land types are listed under each province
 
-par(mar=c(4,4,4,6)+.1) #setting margins
+par(mar=c(4,4,4,6)+.1, xpd = TRUE) #setting margins
 barplot(m, horiz = TRUE, col = c("red", "green", "blue", "purple", "pink"), las = 1, names.arg = names, cex.names = 0.4) 
 title(main = "Land Type by Province in China", xlab = "Fraction of Land Coverage", ylab = "Province" )
 legend("topright", inset = c(-0.2, 0), legend = c("Urban","Cropland", "Greenland", "Forest", "Other"), fill = c("red", "green", "blue", "purple", "pink"), cex = 0.5, title = "Land Type")
