@@ -1,0 +1,145 @@
+---
+title: "Midterm 2"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+### Data 
+
+For this midterm you need to use two datasets:
+
+"chinalanduse_MODIS_2012.nc" contains four layers with land cover data for China. The data were derived from MODIS satellite data for the year 2012. Each layer gives the fraction of the grid cell that has a specific land cover type: urban (layer 1), cropland (layer 2), grassland (layer 3) and forest (layer 4). 
+
+"ch_adm.*" with polygons for the provinces of China.
+
+
+Q1. Read in the land use data as a SpatRaster get the polygons as a SpatVector (2 points)
+
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+path <- "/Users/mayahsu/Desktop/school/environmental data science/"
+
+knitr::opts_knit$set(root.dir = path)
+setwd(path)
+library(terra)
+land <- rast("mid2/chinalanduse_MODIS_2012.nc")
+provinces <- vect("mid2/chn_adm.shp")
+```
+
+Q2a. Crop the land use SpatRaster to the same extent as the SpatVector of Chinese provinces (1 point), and set all grid cells outside of China to `NA`
+
+```{r}
+e <- ext(73.5577, 134.7739, 18.15931, 53.56086)
+land <- crop(land, e)
+
+empty <- rast(, extent = e) #creating an empty raster
+provincer <- rasterize(provinces, empty) #creating a raster of the province data, 
+provincere <- resample(provincer, land) #resampling so that both rasters have the same extent and resolution
+land1 <- mask(land, provincere) #
+```
+
+Q2b. Rename the layers in the SpatRaster so they provide information about what data is in each of the 4 layers (2 points)
+
+```{r}
+names(land1) <- c("Urban", "Cropland", "Grassland", "Forest")
+```
+
+Q3. Make a figure showing each SpatRaster layer on one of the panels and overlay the polygons of the Chinese provinces. Title each panel with the type of land use it shows. (4 points)
+
+```{r}
+par(mfrow=c(2,2))
+
+plot(land1[[1]])
+plot(provinces, add = TRUE)
+title("Urban")
+
+plot(land1[[2]])
+plot(provinces, add = TRUE)
+title("Cropland")
+
+plot(land1[[3]])
+plot(provinces, add = TRUE)
+title("Grassland")
+
+plot(land1[[4]])
+plot(provinces, add = TRUE)
+title("Forest")
+```
+
+Q4a. Use `terra::extract` to find the fraction of each province in each of the four land use classes. [For this question you can assume all the grid cells have the same size] (3 points)
+
+```{r}
+fractions <- extract(land1, provinces, mean, na.rm = TRUE)
+```
+
+Q4b. Describe the potential problem with the area assumption made in 4a. How might it affect the calculation in that step? What could we do if we didn't want to make that assumption? (You don't have to do it, just describe in theory) (2 points)
+
+**Answer:**
+
+
+Q4c. Sum up the fractions in the four land cover classes for each province and plot these as a histogram. (2 points) 
+
+```{r}
+fractions$sum <- fractions$Urban + fractions$Cropland + fractions$Grassland + fractions$Forest
+fractions$name <- provinces$NAME_1
+par(mfrow=c(1,1))
+hist(fractions$sum)
+```
+
+
+Q5. Add a new variable "other" to the data created with terra::extract, and give it the appropriate value. (2 points)
+
+```{r}
+fractions$other <- 1 - fractions$sum
+```
+
+
+Q6. Make barplots showing the breakdown of urban, cropland, grassland, forest, and other for each province. The barplots should be "stacked" (a single bar for each province, showing land cover with a color) and "horizontal" (province names on the vertical axis).  
+
+Q6a) Use graphics::barplot, make sure to include a legend.  (4 points)
+
+```{r}
+barplot <- graphics::barplot
+m <- rbind(fractions$Urban, fractions$Cropland, fractions$Grassland, fractions$Forest, fractions$other)
+par(mar=c(4,4,4,6)+.1, xpd = TRUE)
+barplot(m, horiz = TRUE, col = c("red", "green", "blue", "purple", "pink"), las = 1, names.arg = names, cex.names = 0.4)
+title(main = "Land Type by Province in China", xlab = "Fraction of Land Coverage", ylab = "Province" )
+legend("topright", inset = c(-0.2, 0), legend = c("Urban","Cropland", "Greenland", "Forest", "Other"), fill = c("red", "green", "blue", "purple", "pink"), cex = 0.5, title = "Land Type")
+```
+
+Q6b) Use ggplot. (4 points) 
+
+```{r}
+urban <- data.frame(fractions$name, fractions$Urban)
+urban$type <- "Urban"
+colnames(urban) <- c("Province", "Coverage", "Type")
+
+grassland <- data.frame(fractions$name, fractions$Grassland)
+grassland$type <- "Grassland"
+colnames(grassland) <- c("Province", "Coverage", "Type")
+
+cropland <- data.frame(fractions$name, fractions$Cropland)
+cropland$type <- "Cropland"
+colnames(cropland) <- c("Province", "Coverage", "Type")
+
+forest <- data.frame(fractions$name, fractions$Forest)
+forest$type <- "Forest"
+colnames(forest) <- c("Province", "Coverage", "Type")
+
+other <- data.frame(fractions$name, fractions$other)
+other$type <- "Other"
+colnames(other) <- c("Province", "Coverage", "Type")
+
+library(ggplot2)
+options(repr.plot.width = 2, repr.plot.height =3)
+ggplot(combined, aes(x = Province, y = Coverage, fill = Type), title = "Land Type by Province in China" )+
+  geom_col(position = "stack") + coord_flip()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+```
+
+
+Q7. Upload your R markdown file, and your knitted output to Canvas. Push the R markdown file to your Github repository. (2 points)
+
