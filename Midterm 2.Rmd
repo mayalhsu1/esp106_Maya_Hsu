@@ -1,7 +1,9 @@
 ---
 title: "Midterm 2"
-output: html_document
-editor_options: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -32,13 +34,15 @@ provinces <- vect("mid2/chn_adm.shp")
 Q2a. Crop the land use SpatRaster to the same extent as the SpatVector of Chinese provinces (1 point), and set all grid cells outside of China to `NA`
 
 ```{r}
-e <- ext(73.5577, 134.7739, 18.15931, 53.56086)
-land <- crop(land, e)
+e <- ext(73.5577, 134.7739, 18.15931, 53.56086) #used ext() to find the extent of the SpatVector and created an object with this extent
+land <- crop(land, e) #cropped the SpatRaster using the extent province SpatVector
 
 empty <- rast(, extent = e) #creating an empty raster
-provincer <- rasterize(provinces, empty) #creating a raster of the province data, 
+provincer <- rasterize(provinces, empty) #creating a raster of the province data with the empty raster
 provincere <- resample(provincer, land) #resampling so that both rasters have the same extent and resolution
-land1 <- mask(land, provincere) #
+land1 <- mask(land, provincere) #cells in provincere that are outside China will be labeled as NA; the mask() function assigns cells in land to NA that are NA in the provincere raster
+
+#plotting land1 shows that the raster data only covers the area within China
 ```
 
 Q2b. Rename the layers in the SpatRaster so they provide information about what data is in each of the 4 layers (2 points)
@@ -50,11 +54,11 @@ names(land1) <- c("Urban", "Cropland", "Grassland", "Forest")
 Q3. Make a figure showing each SpatRaster layer on one of the panels and overlay the polygons of the Chinese provinces. Title each panel with the type of land use it shows. (4 points)
 
 ```{r}
-par(mfrow=c(2,2))
+par(mfrow=c(2,2)) #setting parameters so that 4 plots are displayed, with 2 in each row and 2 in each column
 
-plot(land1[[1]])
-plot(provinces, add = TRUE)
-title("Urban")
+plot(land1[[1]]) #plotting the firs layer of the land raster
+plot(provinces, add = TRUE) #plotting the original province data on top
+title("Urban") #labelling the plot
 
 plot(land1[[2]])
 plot(provinces, add = TRUE)
@@ -72,28 +76,31 @@ title("Forest")
 Q4a. Use `terra::extract` to find the fraction of each province in each of the four land use classes. [For this question you can assume all the grid cells have the same size] (3 points)
 
 ```{r}
-fractions <- extract(land1, provinces, mean, na.rm = TRUE)
+fractions <- extract(land1, provinces, mean, na.rm = TRUE) #creating a data frame that shows the proportion of land coverage for each of the provinces; the data frame has 33 entries, which corresponds to the 33 provinces in the province data
 ```
 
 Q4b. Describe the potential problem with the area assumption made in 4a. How might it affect the calculation in that step? What could we do if we didn't want to make that assumption? (You don't have to do it, just describe in theory) (2 points)
 
-**Answer:**
+**Answer: Since we are working with spatial data, the rasters are derived from a spherical representation of the world. As a result, when drawing grid cells, the cell areas will likely vary; the cell sizes at the poles of the Earth will be different than those at the equator. For question 4a, if the cells were different sizes, we would need to take this difference into account by using a weighted mean. A weighted mean would allow us to say what fraction of each province is in each of the land use classes, considering that each cell is a different size.**
 
 
 Q4c. Sum up the fractions in the four land cover classes for each province and plot these as a histogram. (2 points) 
 
 ```{r}
-fractions$sum <- fractions$Urban + fractions$Cropland + fractions$Grassland + fractions$Forest
-fractions$name <- provinces$NAME_1
+fractions$sum <- fractions$Urban + fractions$Cropland + fractions$Grassland + fractions$Forest #creating a new column in the data frame with the sum of land cover for each province
+fractions$name <- provinces$NAME_1 #creating a new column with the names of each province
+names <- provinces$NAME_1
+
 par(mfrow=c(1,1))
-hist(fractions$sum)
+par(mar=c(4,4,4,6)+.1)
+hist(fractions$sum, main = "Proportion of Land Coverage by Province", xlab = "Proportion", ylab = "Frequency")
 ```
 
 
 Q5. Add a new variable "other" to the data created with terra::extract, and give it the appropriate value. (2 points)
 
 ```{r}
-fractions$other <- 1 - fractions$sum
+fractions$other <- 1 - fractions$sum #creating a new variable for the proportion of other land types not covered by the land raster
 ```
 
 
@@ -103,9 +110,10 @@ Q6a) Use graphics::barplot, make sure to include a legend.  (4 points)
 
 ```{r}
 barplot <- graphics::barplot
-m <- rbind(fractions$Urban, fractions$Cropland, fractions$Grassland, fractions$Forest, fractions$other)
-par(mar=c(4,4,4,6)+.1, xpd = TRUE)
-barplot(m, horiz = TRUE, col = c("red", "green", "blue", "purple", "pink"), las = 1, names.arg = names, cex.names = 0.4)
+m <- rbind(fractions$Urban, fractions$Cropland, fractions$Grassland, fractions$Forest, fractions$other) #creating a matrix of land type where each column is a different province and the proportion of different land types are listed under each province
+
+par(mar=c(4,4,4,6)+.1) #setting margins
+barplot(m, horiz = TRUE, col = c("red", "green", "blue", "purple", "pink"), las = 1, names.arg = names, cex.names = 0.4) 
 title(main = "Land Type by Province in China", xlab = "Fraction of Land Coverage", ylab = "Province" )
 legend("topright", inset = c(-0.2, 0), legend = c("Urban","Cropland", "Greenland", "Forest", "Other"), fill = c("red", "green", "blue", "purple", "pink"), cex = 0.5, title = "Land Type")
 ```
@@ -133,11 +141,17 @@ other <- data.frame(fractions$name, fractions$other)
 other$type <- "Other"
 colnames(other) <- c("Province", "Coverage", "Type")
 
+#breaking out each land type into a separate data frame and creating a column for land type
+
+combined <- rbind(urban, grassland, cropland, forest, other)
+#combining the data frames for each land type into one data frame; with this format, land type is in a column and can be used to color the plot
+
 library(ggplot2)
-options(repr.plot.width = 2, repr.plot.height =3)
-ggplot(combined, aes(x = Province, y = Coverage, fill = Type), title = "Land Type by Province in China" )+
+options(repr.plot.width = 2, repr.plot.height = 2)
+ggplot(combined, aes(x = Province, y = Coverage, fill = Type))+
   geom_col(position = "stack") + coord_flip()+
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  labs(title = "Land Type by Province in China", y = "Coverage (as a proportion)")
 ```
 
 
