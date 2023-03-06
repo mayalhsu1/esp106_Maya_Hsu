@@ -11,15 +11,29 @@ path <- "/Users/mayahsu/Desktop/school/environmental data science/"
 
 knitr::opts_knit$set(root.dir = path)
 setwd(path)
-housing <- read.csv("ACSCP1Y2021.CP04-2023-03-06T213420.csv")
+housing <- read.csv("final/ACSCP1Y2021.CP04-2023-03-06T224453.csv")
 ```
 
 ```{r}
-housing$HOUSING.OCCUPANCY = NULL #removing blank column
+housing <- t(housing) #transposing the data
 
-counties <- housing[ , 1] #creating vector of the first column, which is essentially county and year
-housing$Label..Grouping. = NULL
-housing <- housing[!apply(housing == "", 1, all),]
-housing$County <- counties
+headers <- housing[1, ] #after transposing, our desired column headers were in row 1; extracted values from row 1 as a vector 
+colnames(housing) <- headers #renamed columns using vector headers with header names
+housing <- housing[-1, ] #removed first row
+housing <- housing[-110, ] #removed row with blank data
+
+Years <- c("2021", "2019", "2018", "2017") #creating list of dates
+Years <- rep(dates, 41) #repeating dates
+
+as.data.frame(Years) #data frame
+
+housing <- cbind(housing, Years) #adding dates to housing data
+
+County <- rownames(housing)
+County <- substr(County, 1, nchar(County)-27)
+as.data.frame(County)
+
+housing <- cbind(housing, County)
+
 
 ```
