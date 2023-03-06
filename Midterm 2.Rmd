@@ -34,14 +34,7 @@ provinces <- vect("mid2/chn_adm.shp")
 Q2a. Crop the land use SpatRaster to the same extent as the SpatVector of Chinese provinces (1 point), and set all grid cells outside of China to `NA`
 
 ```{r}
-e <- ext(73.5577, 134.7739, 18.15931, 53.56086) #used ext() to find the extent of the SpatVector and created an object with this extent
-land <- crop(land, e) #cropped the SpatRaster using the extent province SpatVector
-
-empty <- rast(, extent = e) #creating an empty raster
-provincer <- rasterize(provinces, empty) #creating a raster of the province data with the empty raster
-provincere <- resample(provincer, land) #resampling so that both rasters have the same extent and resolution
-land1 <- mask(land, provincere) #cells in provincere that are outside China will be labeled as NA; the mask() function assigns cells in land to NA that are NA in the provincere raster
-
+land1 <- crop(land, provinces, mask = TRUE)
 #plotting land1 shows that the raster data only covers the area within China
 ```
 
@@ -56,9 +49,9 @@ Q3. Make a figure showing each SpatRaster layer on one of the panels and overlay
 ```{r}
 par(mfrow=c(2,2)) #setting parameters so that 4 plots are displayed, with 2 in each row and 2 in each column
 
-plot(land1[[1]]) #plotting the firs layer of the land raster
+plot(land1[[1]]) #plotting the first layer of the land raster
 plot(provinces, add = TRUE) #plotting the original province data on top
-title("Urban") #labelling the plot
+title("Urban") #labeling the plot
 
 plot(land1[[2]])
 plot(provinces, add = TRUE)
@@ -76,7 +69,7 @@ title("Forest")
 Q4a. Use `terra::extract` to find the fraction of each province in each of the four land use classes. [For this question you can assume all the grid cells have the same size] (3 points)
 
 ```{r}
-fractions <- extract(land1, provinces, mean, na.rm = TRUE) #creating a data frame that shows the proportion of land coverage for each of the provinces; the data frame has 33 entries, which corresponds to the 33 provinces in the province data
+fractions <- extract(land1, provinces, mean, na.rm = TRUE) #creating a data frame that shows the proportion of land coverage for each of the provinces; the data frame has 33 entries, which corresponds to the 33 provinces in the province data.
 ```
 
 Q4b. Describe the potential problem with the area assumption made in 4a. How might it affect the calculation in that step? What could we do if we didn't want to make that assumption? (You don't have to do it, just describe in theory) (2 points)

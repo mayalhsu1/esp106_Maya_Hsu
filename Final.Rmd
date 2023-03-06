@@ -1,0 +1,25 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-03-06"
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+path <- "/Users/mayahsu/Desktop/school/environmental data science/"
+
+knitr::opts_knit$set(root.dir = path)
+setwd(path)
+housing <- read.csv("ACSCP1Y2021.CP04-2023-03-06T213420.csv")
+```
+
+```{r}
+housing$HOUSING.OCCUPANCY = NULL #removing blank column
+
+counties <- housing[ , 1] #creating vector of the first column, which is essentially county and year
+housing$Label..Grouping. = NULL
+housing <- housing[!apply(housing == "", 1, all),]
+housing$County <- counties
+
+```
