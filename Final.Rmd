@@ -21,19 +21,57 @@ headers <- housing[1, ] #after transposing, our desired column headers were in r
 colnames(housing) <- headers #renamed columns using vector headers with header names
 housing <- housing[-1, ] #removed first row
 housing <- housing[-110, ] #removed row with blank data
+```
 
+```{r}
 Years <- c("2021", "2019", "2018", "2017") #creating list of dates
-Years <- rep(dates, 41) #repeating dates
-
+Years <- rep(Years, 41) #repeating dates
 as.data.frame(Years) #data frame
-
 housing <- cbind(housing, Years) #adding dates to housing data
+```
 
+```{r}
 County <- rownames(housing)
-County <- substr(County, 1, nchar(County)-27)
+County <- substr(County, 1, nchar(County)-34)
 as.data.frame(County)
+County <- gsub(".", " ", County, fixed = TRUE)
+rownames(housing) <- 1:nrow(housing)
+
+housing <- gsub("N", NA, housing)
+housing <- gsub("(X)", NA, housing)
 
 housing <- cbind(housing, County)
+```
+
+```{r}
+housing_type <- housing[ ,c(9:17)]
+housing_type <- gsub("%", "", housing_type, fixed = TRUE)
+housing_type <- as.data.frame(housing_type)
+housing_type <- sapply(housing_type, as.numeric)
+housing_type <- housing_type/100
+
+
+
+housing_type <- as.data.frame(housing_type)
+
+
+housing_type <- cbind(housing_type, housing[ ,161:162])
+```
+
+```{r}
+housing_type_2021 <- subset(housing_type, Years == "2021")
+housing_type_bay <- subset(housing_type_2021, County %in% c("San Francisco", "Santa Clara", "Marin", "Alameda", "Solano", "Contra Costa", "Napa", "Sonoma", "San Mateo"))
+names_bay <- housing_type_bay[, 11]
+housing_type_bay <- subset(housing_type_bay, select = -c(10, 11))
+
+color <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6')
+
+housing_type_bay <- as.matrix(housing_type_bay)
+housing_type_bay <- t(housing_type_bay)
+
+par(mar=c(5.1,6,6,6)+.1, xpd = TRUE)
+barplot(housing_type_bay, horiz = TRUE, names.arg = names_bay, cex.names = 0.7, las = 1, col = color, main = "Housing Type by County in the Bay Area", xlab = "Proportion")
+legend("right", inset = -0.25, legend = rownames(housing_type_bay), fill = color, cex = 0.5, title = "Housing Type")
 
 
 ```
