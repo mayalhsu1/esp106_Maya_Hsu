@@ -9,29 +9,16 @@ date: "2023-03-06"
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 
-path <- "/Users/mayahsu/Desktop/school/environmental data science/"
+path <- "/Users/mayahsu/Desktop/school/environmental data science/esp106_Maya_Hsu/"
 
 knitr::opts_knit$set(root.dir = path)
 setwd(path)
-housing <- read.csv("final/ACSCP1Y2021.CP04-2023-03-06T224453.csv")
-projected <- read.csv("https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-annual-building-activity-report-summary-new-construction-entitled-permits-and-completed.csv")
-
 library(tidyverse)
-```
-
-```{r}
-projected$CNTY_NAME <- str_to_title(projected$CNTY_NAME)
-#projects that where approved with SB35
-i = projected$APPROVE_SB35 == "Y"
-SB35 <- projected[i,]
-#projects that have occupets 
-i = SB35$CO_ISSUE_DT1 != ""
-OC_sb35 <- SB35[i,]
-```
-
-```{r}
-counties <- unique(SB35$CNTY_NAME)
-counties <- sort(counties)
+library(tidyr)
+library(ggplot2)
+housing <- read.csv("ACSCP1Y2021.CP04-2023-03-15T072503.csv")
+projected <- read.csv("table-a-housing-development-applications-submitted.csv")
+demographic <- read.csv("county data.csv")
 ```
 
 ```{r}
@@ -40,12 +27,13 @@ housing <- t(housing) #transposing the data
 headers <- housing[1, ] #extracted values from row 1 as a vector 
 colnames(housing) <- headers #renamed columns with row 1 values
 housing <- housing[-1, ] #removed first row
-housing <- housing[-110, ] #removed row with blank data
+housing <- housing[-165, ]
 ```
 
 ```{r}
 Years <- c("2021", "2019", "2018", "2017") #creating list of dates
 Years <- rep(Years, 41) #repeating dates
+Years
 as.data.frame(Years) #data frame
 housing <- cbind(housing, Years) #adding dates to housing data
 ```
@@ -110,8 +98,22 @@ legend("right", inset = -0.28, legend = rownames(housing_type_metros), fill = co
 ```
 
 ```{r}
+projected$CNTY_NAME <- str_to_title(projected$CNTY_NAME)
+#projects that where approved with SB35
+i = projected$APP_SUBMITTED_SB35 == "Yes-Approved"
+SB35 <- projected[i,]
+#projects that have occupets 
+i = SB35$CO_ISSUE_DT1 != ""
+OC_sb35 <- SB35[i,]
+```
+
+```{r}
+counties <- unique(SB35$CNTY_NAME)
+counties <- sort(counties)
+```
+
+```{r}
 h2021 <- subset(housing_type, Years == "2021")
-housing_type_2021 <- subset(housing_type, Years == "2021")
 sb35_housing_type <- subset(h2021, County %in% counties)
 names_sb35 <- sb35_housing_type[, 11]
 sb35_housing_type <- subset(sb35_housing_type, select = -c(10, 11))
@@ -131,39 +133,49 @@ legend("right", inset = -0.19, legend = sb_type, fill = color, cex = 0.5, title 
 #dev.off()
 ```
 
-
 ```{r}
 SB35_agg <- aggregate(SB35[, 29:35], by = list(SB35$CNTY_NAME), sum)
 
-sb35_per_county <- as.data.frame(SB35_agg[ ,1])
-count <- table(SB35$CNTY_NAME)
-count <- as.data.frame(count)
-total <- count$Freq
-sb35_per_county <- cbind(sb35_per_county, total)
+units <- aggregate(SB35[, 20], by = list(SB35$CNTY_NAME), sum) #number of sb35 units approved
+colnames(units) <- c("County", "Units")
 
-sub <- housing[ , c(2, 161)]
+#sb35_per_county <- as.data.frame(SB35_agg[ ,1])
+#count <- table(SB35$CNTY_NAME)
+#count <- as.data.frame(count)
+#total <- count$Freq
+#sb35_per_county <- cbind(sb35_per_county, total)
+#colnames(sb35_per_county) <- c("County", "Total")
+
+sub <- housing[ , c(2, 161, 162)]
+#sub <- subset(sub, County %in% SB35_agg[ ,1])
 sub <- as.data.frame(sub)
-sub[ ,2] <- as.numeric(as.character(sub[ ,2]))
-
-sub <- sapply(sub, as.numeric)
-
-sub <- subset(sub, County %in% SB35_agg[ ,1])
-sub <- which(sub, Years == "2017")
-
-
-sub <- sapply(sub, as.numeric, na.rm = TRUE)
+sub <- sub[-c(146, 147, 164), ]
+sub[ ,1] <- gsub(",", "", sub[ ,1], fixed = TRUE)
+sub[ ,1:2] <- sapply(sub[ ,1:2], as.numeric)
 
 sub <- subset(sub, Years == 2017 | Years == 2021)
+colnames(sub) <- c("Total Housing Units", "Year", "County")
 
+sub <- pivot_wider(sub, names_from = "Year", values_from = "Total Housing Units")
+sub[ ,4] <- (sub[ ,2]-sub[ ,3])/sub[ ,3]
+colnames(sub) <- c("County", "2021",  "2017", "Percent Change in Housing")
 
+change_v_sb35 <- merge(sub, units, by = "County")
+change_v_sb35 <- merge(change_v_sb35, approved_v_income, by = "County")
 
+library(ggplot2)
+ggplot(change_v_sb35, aes(x = change_v_sb35[ ,4], y = change_v_sb35[ ,9]))+
+  geom_point()+geom_smooth(method = "lm")+
+  labs(x = "Percent Change in Total Housing", y = "Number of Approved SB35 Projects")
 
-demographic <- read.csv("final/county data.csv")
-
+cor.test(change_v_sb35[ ,4], change_v_sb35[ ,9])
 ```
 
 ```{r}
 new_type <- as.data.frame(projected[ ,c(2, 9)])
+new_type <- pivot_wider(new_type, names_from = UNIT_CAT, values_from = CNTY_NAME)
+
+table(projected$CNTY_NAME)
 rownames(new_type) <- new_type[ ,1]
 new_type[ ,1] <- NULL
 ggplot(new_type, aes(x = ))
@@ -177,5 +189,31 @@ table(i)
 ```
 
 ```{r}
+med_income <- as.data.frame(demographic[ ,c(1,2,29)])
+med_income <- med_income[-c(59,60), ]
+colnames(med_income) <- c("County", "Population","Median Income")
 
+income <- med_income[ ,3]
+income <- gsub("$", "", income, fixed = TRUE)
+income <- gsub(" ", "", income, fixed = TRUE)
+income <- gsub(",", "", income, fixed = TRUE)
+income <- as.data.frame(income)
+income <- sapply(income, as.numeric)
+med_income[ ,3] <- income
+
+population <- med_income[ ,2]
+population <- gsub(",", "", population, fixed = TRUE)
+population <- as.data.frame(population)
+population <- sapply(population, as.numeric)
+med_income[ ,2] <- population
+
+approved_v_income <- merge(units, med_income, by = "County")
+approved_v_income[ ,5] <- approved_v_income[ ,2]/approved_v_income[ ,3]
+colnames(approved_v_income) <- c("County", "Count", "Population", "Median Income", "Units/Person")
+
+ggplot(approved_v_income, aes(x = approved_v_income[ ,4], y = approved_v_income[ ,5]))+
+  geom_point()+geom_smooth(method = "lm")+
+  labs(x = "Median Income", y = "SB35 Projects per Person")
+
+cor.test(approved_v_income[ ,4], approved_v_income[ ,5])
 ```
