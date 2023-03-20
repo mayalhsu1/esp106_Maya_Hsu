@@ -16,9 +16,9 @@ setwd(path)
 library(tidyverse)
 library(tidyr)
 library(ggplot2)
-housing <- read.csv("ACSCP1Y2021.CP04-2023-03-15T072503.csv")
-projected <- read.csv("table-a-housing-development-applications-submitted.csv")
-demographic <- read.csv("county data.csv")
+housing <- read.csv("https://raw.githubusercontent.com/mayalhsu1/esp106_Maya_Hsu/main/ACSCP1Y2021.CP04-2023-03-15T072503.csv")
+projected <- read.csv("https://raw.githubusercontent.com/mayalhsu1/esp106_Maya_Hsu/main/table-a-housing-development-applications-submitted.csv")
+demographic <- read.csv("https://raw.githubusercontent.com/mayalhsu1/esp106_Maya_Hsu/808243c7a23cddf66bb9998d6640d19c26a7a202/county%20data.csv")
 ```
 
 ```{r}
@@ -27,13 +27,12 @@ housing <- t(housing) #transposing the data
 headers <- housing[1, ] #extracted values from row 1 as a vector 
 colnames(housing) <- headers #renamed columns with row 1 values
 housing <- housing[-1, ] #removed first row
-housing <- housing[-165, ]
+housing <- housing[-165, ] #removed empty row
 ```
 
 ```{r}
 Years <- c("2021", "2019", "2018", "2017") #creating list of dates
 Years <- rep(Years, 41) #repeating dates
-Years
 as.data.frame(Years) #data frame
 housing <- cbind(housing, Years) #adding dates to housing data
 ```
@@ -63,48 +62,11 @@ housing_type <- as.data.frame(housing_type)
 housing_type <- cbind(housing_type, housing[ ,161:162])
 ```
 
-#Bay Area graph
-```{r}
-h2021 <- subset(housing_type, Years == "2021")
-bay <- subset(h2021, County %in% c("SAN FRANCISCO", "SANTA CLARA", "MARIN", "ALAMEDA", "SOLANO", "CONTRA COSTA", "NAPA", "SONOMA", "SAN MATEO"))
-names_bay <- bay[, 11]
-bay <- subset(bay, select = -c(10, 11))
-
-color <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6')
-
-bay <- as.matrix(bay)
-bay <- t(bay)
-
-par(mar=c(5.1,6,6,6)+.1, xpd = TRUE)
-barplot(bay, horiz = TRUE, names.arg = names_bay, cex.names = 0.7, las = 1, col = color, main = "Housing Type by County in the Bay Area", xlab = "Proportion")
-legend("right", inset = -0.28, legend = rownames(bay), fill = color, cex = 0.5, title = "Housing Type")
-```
-
-#Metro graph
-```{r}
-housing_type_2021 <- subset(housing_type, Years == "2021")
-housing_type_metros <- subset(housing_type_2021, County %in% c("SAN FRANCISCO", "LOS ANGELES", "SAN DIEGO", "SACRAMENTO"))
-names_metros <- housing_type_metros[, 11]
-housing_type_metros <- subset(housing_type_metros, select = -c(10, 11))
-
-color <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6')
-
-housing_type_metros <- as.matrix(housing_type_metros)
-housing_type_metros <- t(housing_type_metros)
-
-par(mar=c(5.1,6,6,6)+.1, xpd = TRUE)
-barplot(housing_type_metros, horiz = TRUE, names.arg = names_metros, cex.names = 0.7, las = 1, col = color, main = "Housing Type by County", xlab = "Proportion")
-legend("right", inset = -0.28, legend = rownames(housing_type_metros), fill = color, cex = 0.5, title = "Housing Type")
-```
-
 ```{r}
 projected$CNTY_NAME <- str_to_title(projected$CNTY_NAME)
 #projects that where approved with SB35
 i = projected$APP_SUBMITTED_SB35 == "Yes-Approved"
 SB35 <- projected[i,]
-#projects that have occupets 
-i = SB35$CO_ISSUE_DT1 != ""
-OC_sb35 <- SB35[i,]
 ```
 
 ```{r}
@@ -133,62 +95,11 @@ legend("right", inset = -0.19, legend = sb_type, fill = color, cex = 0.5, title 
 #dev.off()
 ```
 
-```{r}
-SB35_agg <- aggregate(SB35[, 29:35], by = list(SB35$CNTY_NAME), sum)
 
+```{r}
 units <- aggregate(SB35[, 20], by = list(SB35$CNTY_NAME), sum) #number of sb35 units approved
 colnames(units) <- c("County", "Units")
 
-#sb35_per_county <- as.data.frame(SB35_agg[ ,1])
-#count <- table(SB35$CNTY_NAME)
-#count <- as.data.frame(count)
-#total <- count$Freq
-#sb35_per_county <- cbind(sb35_per_county, total)
-#colnames(sb35_per_county) <- c("County", "Total")
-
-sub <- housing[ , c(2, 161, 162)]
-#sub <- subset(sub, County %in% SB35_agg[ ,1])
-sub <- as.data.frame(sub)
-sub <- sub[-c(146, 147, 164), ]
-sub[ ,1] <- gsub(",", "", sub[ ,1], fixed = TRUE)
-sub[ ,1:2] <- sapply(sub[ ,1:2], as.numeric)
-
-sub <- subset(sub, Years == 2017 | Years == 2021)
-colnames(sub) <- c("Total Housing Units", "Year", "County")
-
-sub <- pivot_wider(sub, names_from = "Year", values_from = "Total Housing Units")
-sub[ ,4] <- (sub[ ,2]-sub[ ,3])/sub[ ,3]
-colnames(sub) <- c("County", "2021",  "2017", "Percent Change in Housing")
-
-change_v_sb35 <- merge(sub, units, by = "County")
-change_v_sb35 <- merge(change_v_sb35, approved_v_income, by = "County")
-
-library(ggplot2)
-ggplot(change_v_sb35, aes(x = change_v_sb35[ ,4], y = change_v_sb35[ ,9]))+
-  geom_point()+geom_smooth(method = "lm")+
-  labs(x = "Percent Change in Total Housing", y = "Number of Approved SB35 Projects")
-
-cor.test(change_v_sb35[ ,4], change_v_sb35[ ,9])
-```
-
-```{r}
-new_type <- as.data.frame(projected[ ,c(2, 9)])
-new_type <- pivot_wider(new_type, names_from = UNIT_CAT, values_from = CNTY_NAME)
-
-table(projected$CNTY_NAME)
-rownames(new_type) <- new_type[ ,1]
-new_type[ ,1] <- NULL
-ggplot(new_type, aes(x = ))
-```
-
-```{r}
-i <- (projected$TENURE_DESC == "Owner")&(projected$UNIT_CAT_DESC != "Single-Family Detached Unit")
-table(i)
-
-#compare low income developments to poverty rates by county
-```
-
-```{r}
 med_income <- as.data.frame(demographic[ ,c(1,2,29)])
 med_income <- med_income[-c(59,60), ]
 colnames(med_income) <- c("County", "Population","Median Income")
@@ -216,4 +127,64 @@ ggplot(approved_v_income, aes(x = approved_v_income[ ,4], y = approved_v_income[
   labs(x = "Median Income", y = "SB35 Projects per Person")
 
 cor.test(approved_v_income[ ,4], approved_v_income[ ,5])
+```
+
+
+```{r}
+sub <- housing[ , c(2, 161, 162)]
+#sub <- subset(sub, County %in% SB35_agg[ ,1])
+sub <- as.data.frame(sub)
+sub <- subset(sub, Years == 2017 | Years == 2021)
+sub <- sub[-c(145, 148), ]
+sub[ ,1] <- gsub(",", "", sub[ ,1], fixed = TRUE)
+sub[ ,1:2] <- sapply(sub[ ,1:2], as.numeric)
+
+
+colnames(sub) <- c("Total Housing Units", "Year", "County")
+
+sub <- pivot_wider(sub, names_from = "Year", values_from = "Total Housing Units")
+sub[ ,4] <- (sub[ ,2]-sub[ ,3])/sub[ ,3]
+colnames(sub) <- c("County", "2021",  "2017", "Percent Change in Housing")
+
+change_v_sb35 <- merge(sub, units, by = "County")
+change_v_sb35 <- merge(change_v_sb35, approved_v_income, by = "County")
+
+ggplot(change_v_sb35, aes(x = change_v_sb35[ ,4], y = change_v_sb35[ ,9]))+
+  geom_point()+geom_smooth(method = "lm")+
+  labs(x = "Percent Change in Total Housing", y = "Number of Approved SB35 Projects")
+
+cor.test(change_v_sb35[ ,4], change_v_sb35[ ,9])
+```
+
+```{r}
+new_type <- as.data.frame(projected[ ,c(2, 9)])
+
+all_projected <- data.frame(v1 = character(), v2 = numeric(), v3 = character())
+
+a <- unique(new_type$CNTY_NAME)
+for(i in 1:length(a)) {
+b = new_type$CNTY_NAME == a[i]
+temp <- new_type[b,]
+temp[,3] <- 1
+temp <- aggregate(temp[,3], by = list(temp$UNIT_CAT), sum)
+sum <- sum(temp[,2])
+temp[,3] <- temp[,2]/sum
+temp[ ,2] <- NULL
+temp[ ,3] <- a[i]
+all_projected <- rbind(all_projected, temp)
+}
+
+colnames(all_projected) <- c("Type", "%", "County")
+all_projected <- pivot_wider(all_projected, names_from = "Type", values_from = "%")
+all_projected[ ,1] <- NULL
+
+all_projected[is.na(all_projected)] <- 0
+
+all_projected <- t(all_projected)
+
+
+par(mar=c(4,5,5,5)+.1, xpd = TRUE)
+barplot(all_projected, horiz = TRUE, names.arg = a, cex.names = 0.4, las = 1, col = color, main = "Housing Type in Counties With\nApproved SB35 Projects", xlab = "Proportion", cex.axis = 0.5, width = 1, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32))
+legend("right", inset = -0.19, legend = sb_type, fill = color, cex = 0.5, title = "Housing Type")
+
 ```
