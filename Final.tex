@@ -1,0 +1,832 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Untitled},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Untitled}
+\author{}
+\date{\vspace{-2.5em}2023-03-06}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{opts\_chunk}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{echo =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{path }\OtherTok{\textless{}{-}} \StringTok{"/Users/mayahsu/Desktop/school/environmental data science/esp106\_Maya\_Hsu/"}
+
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{opts\_knit}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{root.dir =}\NormalTok{ path)}
+\FunctionTok{setwd}\NormalTok{(path)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
+## v dplyr     1.1.0     v readr     2.1.4
+## v forcats   1.0.0     v stringr   1.5.0
+## v ggplot2   3.4.1     v tibble    3.2.1
+## v lubridate 1.9.2     v tidyr     1.3.0
+## v purrr     1.0.1     
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+## i Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyr)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/mayalhsu1/esp106\_Maya\_Hsu/main/ACSCP1Y2021.CP04{-}2023{-}03{-}15T072503.csv"}\NormalTok{)}
+\NormalTok{projected }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/mayalhsu1/esp106\_Maya\_Hsu/main/table{-}a{-}housing{-}development{-}applications{-}submitted.csv"}\NormalTok{)}
+\NormalTok{demographic }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/mayalhsu1/esp106\_Maya\_Hsu/808243c7a23cddf66bb9998d6640d19c26a7a202/county\%20data.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(housing) }\CommentTok{\#transposing the data}
+\NormalTok{headers }\OtherTok{\textless{}{-}}\NormalTok{ housing[}\DecValTok{1}\NormalTok{, ] }\CommentTok{\#extracted values from row 1 as a vector }
+\FunctionTok{colnames}\NormalTok{(housing) }\OtherTok{\textless{}{-}}\NormalTok{ headers }\CommentTok{\#renamed columns with row 1 values}
+\NormalTok{housing }\OtherTok{\textless{}{-}}\NormalTok{ housing[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, ] }\CommentTok{\#removed first row}
+\NormalTok{housing }\OtherTok{\textless{}{-}}\NormalTok{ housing[}\SpecialCharTok{{-}}\DecValTok{165}\NormalTok{, ] }\CommentTok{\#removed empty row}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Years }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"2021"}\NormalTok{, }\StringTok{"2019"}\NormalTok{, }\StringTok{"2018"}\NormalTok{, }\StringTok{"2017"}\NormalTok{) }\CommentTok{\#creating list of dates}
+\NormalTok{Years }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(Years, }\DecValTok{41}\NormalTok{) }\CommentTok{\#repeating dates}
+\FunctionTok{as.data.frame}\NormalTok{(Years) }\CommentTok{\#data frame}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Years
+## 1    2021
+## 2    2019
+## 3    2018
+## 4    2017
+## 5    2021
+## 6    2019
+## 7    2018
+## 8    2017
+## 9    2021
+## 10   2019
+## 11   2018
+## 12   2017
+## 13   2021
+## 14   2019
+## 15   2018
+## 16   2017
+## 17   2021
+## 18   2019
+## 19   2018
+## 20   2017
+## 21   2021
+## 22   2019
+## 23   2018
+## 24   2017
+## 25   2021
+## 26   2019
+## 27   2018
+## 28   2017
+## 29   2021
+## 30   2019
+## 31   2018
+## 32   2017
+## 33   2021
+## 34   2019
+## 35   2018
+## 36   2017
+## 37   2021
+## 38   2019
+## 39   2018
+## 40   2017
+## 41   2021
+## 42   2019
+## 43   2018
+## 44   2017
+## 45   2021
+## 46   2019
+## 47   2018
+## 48   2017
+## 49   2021
+## 50   2019
+## 51   2018
+## 52   2017
+## 53   2021
+## 54   2019
+## 55   2018
+## 56   2017
+## 57   2021
+## 58   2019
+## 59   2018
+## 60   2017
+## 61   2021
+## 62   2019
+## 63   2018
+## 64   2017
+## 65   2021
+## 66   2019
+## 67   2018
+## 68   2017
+## 69   2021
+## 70   2019
+## 71   2018
+## 72   2017
+## 73   2021
+## 74   2019
+## 75   2018
+## 76   2017
+## 77   2021
+## 78   2019
+## 79   2018
+## 80   2017
+## 81   2021
+## 82   2019
+## 83   2018
+## 84   2017
+## 85   2021
+## 86   2019
+## 87   2018
+## 88   2017
+## 89   2021
+## 90   2019
+## 91   2018
+## 92   2017
+## 93   2021
+## 94   2019
+## 95   2018
+## 96   2017
+## 97   2021
+## 98   2019
+## 99   2018
+## 100  2017
+## 101  2021
+## 102  2019
+## 103  2018
+## 104  2017
+## 105  2021
+## 106  2019
+## 107  2018
+## 108  2017
+## 109  2021
+## 110  2019
+## 111  2018
+## 112  2017
+## 113  2021
+## 114  2019
+## 115  2018
+## 116  2017
+## 117  2021
+## 118  2019
+## 119  2018
+## 120  2017
+## 121  2021
+## 122  2019
+## 123  2018
+## 124  2017
+## 125  2021
+## 126  2019
+## 127  2018
+## 128  2017
+## 129  2021
+## 130  2019
+## 131  2018
+## 132  2017
+## 133  2021
+## 134  2019
+## 135  2018
+## 136  2017
+## 137  2021
+## 138  2019
+## 139  2018
+## 140  2017
+## 141  2021
+## 142  2019
+## 143  2018
+## 144  2017
+## 145  2021
+## 146  2019
+## 147  2018
+## 148  2017
+## 149  2021
+## 150  2019
+## 151  2018
+## 152  2017
+## 153  2021
+## 154  2019
+## 155  2018
+## 156  2017
+## 157  2021
+## 158  2019
+## 159  2018
+## 160  2017
+## 161  2021
+## 162  2019
+## 163  2018
+## 164  2017
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(housing, Years) }\CommentTok{\#adding dates to housing data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{County }\OtherTok{\textless{}{-}} \FunctionTok{rownames}\NormalTok{(housing) }\CommentTok{\#extracting the row names, which say the county and year}
+\NormalTok{County }\OtherTok{\textless{}{-}} \FunctionTok{substr}\NormalTok{(County, }\DecValTok{1}\NormalTok{, }\FunctionTok{nchar}\NormalTok{(County)}\SpecialCharTok{{-}}\DecValTok{34}\NormalTok{) }\CommentTok{\#extracting the county name}
+\FunctionTok{as.data.frame}\NormalTok{(County) }\CommentTok{\#turning the vector of counties into a data frame}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              County
+## 1           Alameda
+## 2           Alameda
+## 3           Alameda
+## 4           Alameda
+## 5             Butte
+## 6             Butte
+## 7             Butte
+## 8             Butte
+## 9      Contra.Costa
+## 10     Contra.Costa
+## 11     Contra.Costa
+## 12     Contra.Costa
+## 13        El.Dorado
+## 14        El.Dorado
+## 15        El.Dorado
+## 16        El.Dorado
+## 17           Fresno
+## 18           Fresno
+## 19           Fresno
+## 20           Fresno
+## 21         Humboldt
+## 22         Humboldt
+## 23         Humboldt
+## 24         Humboldt
+## 25         Imperial
+## 26         Imperial
+## 27         Imperial
+## 28         Imperial
+## 29             Kern
+## 30             Kern
+## 31             Kern
+## 32             Kern
+## 33            Kings
+## 34            Kings
+## 35            Kings
+## 36            Kings
+## 37             Lake
+## 38             Lake
+## 39             Lake
+## 40             Lake
+## 41      Los.Angeles
+## 42      Los.Angeles
+## 43      Los.Angeles
+## 44      Los.Angeles
+## 45           Madera
+## 46           Madera
+## 47           Madera
+## 48           Madera
+## 49            Marin
+## 50            Marin
+## 51            Marin
+## 52            Marin
+## 53        Mendocino
+## 54        Mendocino
+## 55        Mendocino
+## 56        Mendocino
+## 57           Merced
+## 58           Merced
+## 59           Merced
+## 60           Merced
+## 61         Monterey
+## 62         Monterey
+## 63         Monterey
+## 64         Monterey
+## 65             Napa
+## 66             Napa
+## 67             Napa
+## 68             Napa
+## 69           Nevada
+## 70           Nevada
+## 71           Nevada
+## 72           Nevada
+## 73           Orange
+## 74           Orange
+## 75           Orange
+## 76           Orange
+## 77           Placer
+## 78           Placer
+## 79           Placer
+## 80           Placer
+## 81        Riverside
+## 82        Riverside
+## 83        Riverside
+## 84        Riverside
+## 85       Sacramento
+## 86       Sacramento
+## 87       Sacramento
+## 88       Sacramento
+## 89   San.Bernardino
+## 90   San.Bernardino
+## 91   San.Bernardino
+## 92   San.Bernardino
+## 93        San.Diego
+## 94        San.Diego
+## 95        San.Diego
+## 96        San.Diego
+## 97    San.Francisco
+## 98    San.Francisco
+## 99    San.Francisco
+## 100   San.Francisco
+## 101     San.Joaquin
+## 102     San.Joaquin
+## 103     San.Joaquin
+## 104     San.Joaquin
+## 105 San.Luis.Obispo
+## 106 San.Luis.Obispo
+## 107 San.Luis.Obispo
+## 108 San.Luis.Obispo
+## 109       San.Mateo
+## 110       San.Mateo
+## 111       San.Mateo
+## 112       San.Mateo
+## 113   Santa.Barbara
+## 114   Santa.Barbara
+## 115   Santa.Barbara
+## 116   Santa.Barbara
+## 117     Santa.Clara
+## 118     Santa.Clara
+## 119     Santa.Clara
+## 120     Santa.Clara
+## 121      Santa.Cruz
+## 122      Santa.Cruz
+## 123      Santa.Cruz
+## 124      Santa.Cruz
+## 125          Shasta
+## 126          Shasta
+## 127          Shasta
+## 128          Shasta
+## 129          Solano
+## 130          Solano
+## 131          Solano
+## 132          Solano
+## 133          Sonoma
+## 134          Sonoma
+## 135          Sonoma
+## 136          Sonoma
+## 137      Stanislaus
+## 138      Stanislaus
+## 139      Stanislaus
+## 140      Stanislaus
+## 141          Sutter
+## 142          Sutter
+## 143          Sutter
+## 144          Sutter
+## 145          Tehama
+## 146          Tehama
+## 147          Tehama
+## 148          Tehama
+## 149          Tulare
+## 150          Tulare
+## 151          Tulare
+## 152          Tulare
+## 153         Ventura
+## 154         Ventura
+## 155         Ventura
+## 156         Ventura
+## 157            Yolo
+## 158            Yolo
+## 159            Yolo
+## 160            Yolo
+## 161            Yuba
+## 162            Yuba
+## 163            Yuba
+## 164            Yuba
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{County }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"."}\NormalTok{, }\StringTok{" "}\NormalTok{, County, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#replacing the periods with spaces}
+\FunctionTok{rownames}\NormalTok{(housing) }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(housing) }\CommentTok{\#changing the row names to numbers}
+
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"N"}\NormalTok{, }\ConstantTok{NA}\NormalTok{, housing) }\CommentTok{\#replacing N values with NA}
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"(X)"}\NormalTok{, }\ConstantTok{NA}\NormalTok{, housing) }\CommentTok{\#replacing (X) values with NA}
+
+\NormalTok{housing }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(housing, County) }\CommentTok{\#adding a column for county }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}}\NormalTok{ housing[ ,}\FunctionTok{c}\NormalTok{(}\DecValTok{9}\SpecialCharTok{:}\DecValTok{17}\NormalTok{)] }\CommentTok{\#subsetting the housing data for housing type columns}
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"\%"}\NormalTok{, }\StringTok{""}\NormalTok{, housing\_type, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#getting rid of \% }
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(housing\_type) }\CommentTok{\#turning housing\_type into a data frame}
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(housing\_type, as.numeric) }\CommentTok{\#turning the data values into numeric}
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}}\NormalTok{ housing\_type}\SpecialCharTok{/}\DecValTok{100} \CommentTok{\#dividing by 100 to get proportion}
+
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(housing\_type) }\CommentTok{\#turning into data frame}
+
+\NormalTok{housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(housing\_type, housing[ ,}\DecValTok{161}\SpecialCharTok{:}\DecValTok{162}\NormalTok{]) }\CommentTok{\#adding year and county data}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{projected}\SpecialCharTok{$}\NormalTok{CNTY\_NAME }\OtherTok{\textless{}{-}} \FunctionTok{str\_to\_title}\NormalTok{(projected}\SpecialCharTok{$}\NormalTok{CNTY\_NAME) }\CommentTok{\#changing to title capitalization }
+\NormalTok{i }\OtherTok{=}\NormalTok{ projected}\SpecialCharTok{$}\NormalTok{APP\_SUBMITTED\_SB35 }\SpecialCharTok{==} \StringTok{"Yes{-}Approved"}
+\NormalTok{SB35 }\OtherTok{\textless{}{-}}\NormalTok{ projected[i,] }\CommentTok{\#projects approved with SB35}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{counties }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(SB35}\SpecialCharTok{$}\NormalTok{CNTY\_NAME) }\CommentTok{\#list of counties that had approved SB35 projects}
+\NormalTok{counties }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(counties) }\CommentTok{\#alphabetizing}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{h2021 }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(housing\_type, Years }\SpecialCharTok{==} \StringTok{"2021"}\NormalTok{) }\CommentTok{\#housing type data for 2021}
+\NormalTok{sb35\_housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(h2021, h2021[ ,}\DecValTok{11}\NormalTok{] }\SpecialCharTok{\%in\%}\NormalTok{ counties) }\CommentTok{\#subsetting 2021 housing data for only counties that had approved sb35 projects, no data for Mono or San Benito in current housing data}
+\NormalTok{names\_sb35 }\OtherTok{\textless{}{-}}\NormalTok{ sb35\_housing\_type[, }\DecValTok{11}\NormalTok{] }\CommentTok{\#creating object with county names}
+\NormalTok{sb35\_housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(sb35\_housing\_type, }\AttributeTok{select =} \SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{, }\DecValTok{11}\NormalTok{)) }\CommentTok{\#removing year and county columns}
+
+\NormalTok{color }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#a6cee3\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#1f78b4\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#b2df8a\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#33a02c\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#fb9a99\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#e31a1c\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#fdbf6f\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#ff7f00\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#cab2d6\textquotesingle{}}\NormalTok{)}
+
+\NormalTok{sb\_type }\OtherTok{\textless{}{-}} \FunctionTok{colnames}\NormalTok{(sb35\_housing\_type) }\CommentTok{\#creating object with column names}
+\NormalTok{sb\_type }\OtherTok{\textless{}{-}} \FunctionTok{str\_squish}\NormalTok{(sb\_type) }\CommentTok{\#removing extra spaces}
+
+\CommentTok{\#sb35\_housing\_type \textless{}{-} as.matrix(sb35\_housing\_type)}
+\NormalTok{sb35\_housing\_type }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(sb35\_housing\_type) }\CommentTok{\#r}
+
+\CommentTok{\#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/Current Housing Data", width = 5, height = 5, units = "in", res = 300)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{)}\SpecialCharTok{+}\NormalTok{.}\DecValTok{1}\NormalTok{, }\AttributeTok{xpd =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{barplot}\NormalTok{(sb35\_housing\_type, }\AttributeTok{horiz =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{names.arg =}\NormalTok{ names\_sb35, }\AttributeTok{cex.names =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ color, }\AttributeTok{main =} \StringTok{"Current Housing in Counties With}\SpecialCharTok{\textbackslash{}n}\StringTok{Approved SB35 Projects in 2021"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{width =} \DecValTok{1}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{32}\NormalTok{))}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{inset =} \SpecialCharTok{{-}}\FloatTok{0.19}\NormalTok{, }\AttributeTok{legend =}\NormalTok{ sb\_type, }\AttributeTok{fill =}\NormalTok{ color, }\AttributeTok{cex =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{title =} \StringTok{"Housing Type"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#dev.off()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{units }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(SB35[, }\DecValTok{20}\NormalTok{], }\AttributeTok{by =} \FunctionTok{list}\NormalTok{(SB35}\SpecialCharTok{$}\NormalTok{CNTY\_NAME), sum) }\CommentTok{\#sum of sb35 units approved for each county}
+\FunctionTok{colnames}\NormalTok{(units) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"County"}\NormalTok{, }\StringTok{"Units"}\NormalTok{) }\CommentTok{\#renaming columns}
+
+\NormalTok{med\_income }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(demographic[ ,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{29}\NormalTok{)]) }\CommentTok{\#extracting county, population, and median income columns from demographics data}
+\NormalTok{med\_income }\OtherTok{\textless{}{-}}\NormalTok{ med\_income[}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(}\DecValTok{59}\NormalTok{,}\DecValTok{60}\NormalTok{), ] }\CommentTok{\#removing blank rows}
+\FunctionTok{colnames}\NormalTok{(med\_income) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"County"}\NormalTok{, }\StringTok{"Population"}\NormalTok{,}\StringTok{"Median Income"}\NormalTok{) }\CommentTok{\#renaming columns}
+
+\NormalTok{income }\OtherTok{\textless{}{-}}\NormalTok{ med\_income[ ,}\DecValTok{3}\NormalTok{] }\CommentTok{\#creating object with median income data}
+\NormalTok{income }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"$"}\NormalTok{, }\StringTok{""}\NormalTok{, income, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#removing $}
+\NormalTok{income }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{" "}\NormalTok{, }\StringTok{""}\NormalTok{, income, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#removing extra spaces}
+\NormalTok{income }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{","}\NormalTok{, }\StringTok{""}\NormalTok{, income, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#removing commas}
+\NormalTok{income }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(income) }\CommentTok{\#changing to data frame}
+\NormalTok{income }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(income, as.numeric) }\CommentTok{\#making values numeric}
+\NormalTok{med\_income[ ,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ income }\CommentTok{\#replacing third column in med\_income with numeric income object}
+
+\NormalTok{population }\OtherTok{\textless{}{-}}\NormalTok{ med\_income[ ,}\DecValTok{2}\NormalTok{] }\CommentTok{\#creating object with population data}
+\NormalTok{population }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{","}\NormalTok{, }\StringTok{""}\NormalTok{, population, }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{) }\CommentTok{\#removing commas}
+\NormalTok{population }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(population)}
+\NormalTok{population }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(population, as.numeric)}
+\NormalTok{med\_income[ ,}\DecValTok{2}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ population}
+
+\NormalTok{approved\_v\_income }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(units, med\_income, }\AttributeTok{by =} \StringTok{"County"}\NormalTok{)}
+\NormalTok{approved\_v\_income[ ,}\DecValTok{5}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ approved\_v\_income[ ,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{/}\NormalTok{approved\_v\_income[ ,}\DecValTok{3}\NormalTok{]}
+\FunctionTok{colnames}\NormalTok{(approved\_v\_income) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"County"}\NormalTok{, }\StringTok{"Count"}\NormalTok{, }\StringTok{"Population"}\NormalTok{, }\StringTok{"Median Income"}\NormalTok{, }\StringTok{"Units/Person"}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(approved\_v\_income, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ approved\_v\_income[ ,}\DecValTok{4}\NormalTok{], }\AttributeTok{y =}\NormalTok{ approved\_v\_income[ ,}\DecValTok{5}\NormalTok{]))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}\FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Median Income"}\NormalTok{, }\AttributeTok{y =} \StringTok{"SB35 Projects per Person"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor.test}\NormalTok{(approved\_v\_income[ ,}\DecValTok{4}\NormalTok{], approved\_v\_income[ ,}\DecValTok{5}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Pearson's product-moment correlation
+## 
+## data:  approved_v_income[, 4] and approved_v_income[, 5]
+## t = 0.19707, df = 26, p-value = 0.8453
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.3393463  0.4058493
+## sample estimates:
+##        cor 
+## 0.03861997
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sub }\OtherTok{\textless{}{-}}\NormalTok{ housing[ , }\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{161}\NormalTok{, }\DecValTok{162}\NormalTok{)]}
+\CommentTok{\#sub \textless{}{-} subset(sub, County \%in\% SB35\_agg[ ,1])}
+\NormalTok{sub }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(sub)}
+\NormalTok{sub }\OtherTok{\textless{}{-}} \FunctionTok{subset}\NormalTok{(sub, Years }\SpecialCharTok{==} \DecValTok{2017} \SpecialCharTok{|}\NormalTok{ Years }\SpecialCharTok{==} \DecValTok{2021}\NormalTok{)}
+\NormalTok{sub }\OtherTok{\textless{}{-}}\NormalTok{ sub[}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(}\DecValTok{145}\NormalTok{, }\DecValTok{148}\NormalTok{), ]}
+\NormalTok{sub[ ,}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{","}\NormalTok{, }\StringTok{""}\NormalTok{, sub[ ,}\DecValTok{1}\NormalTok{], }\AttributeTok{fixed =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{sub[ ,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(sub[ ,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{2}\NormalTok{], as.numeric)}
+
+
+\FunctionTok{colnames}\NormalTok{(sub) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Total Housing Units"}\NormalTok{, }\StringTok{"Year"}\NormalTok{, }\StringTok{"County"}\NormalTok{)}
+
+\NormalTok{sub }\OtherTok{\textless{}{-}} \FunctionTok{pivot\_wider}\NormalTok{(sub, }\AttributeTok{names\_from =} \StringTok{"Year"}\NormalTok{, }\AttributeTok{values\_from =} \StringTok{"Total Housing Units"}\NormalTok{)}
+\NormalTok{sub[ ,}\DecValTok{4}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ (sub[ ,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{{-}}\NormalTok{sub[ ,}\DecValTok{3}\NormalTok{])}\SpecialCharTok{/}\NormalTok{sub[ ,}\DecValTok{3}\NormalTok{]}
+\FunctionTok{colnames}\NormalTok{(sub) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"County"}\NormalTok{, }\StringTok{"2021"}\NormalTok{,  }\StringTok{"2017"}\NormalTok{, }\StringTok{"Percent Change in Housing"}\NormalTok{)}
+
+\NormalTok{change\_v\_sb35 }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(sub, units, }\AttributeTok{by =} \StringTok{"County"}\NormalTok{)}
+\NormalTok{change\_v\_sb35 }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(change\_v\_sb35, approved\_v\_income, }\AttributeTok{by =} \StringTok{"County"}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(change\_v\_sb35, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ change\_v\_sb35[ ,}\DecValTok{4}\NormalTok{], }\AttributeTok{y =}\NormalTok{ change\_v\_sb35[ ,}\DecValTok{9}\NormalTok{]))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}\FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Percent Change in Total Housing"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Number of Approved SB35 Projects"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor.test}\NormalTok{(change\_v\_sb35[ ,}\DecValTok{4}\NormalTok{], change\_v\_sb35[ ,}\DecValTok{9}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Pearson's product-moment correlation
+## 
+## data:  change_v_sb35[, 4] and change_v_sb35[, 9]
+## t = -0.18257, df = 24, p-value = 0.8567
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.4185558  0.3552346
+## sample estimates:
+##         cor 
+## -0.03724181
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{new\_type }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(projected[ ,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{9}\NormalTok{)])}
+
+\NormalTok{all\_projected }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{v1 =} \FunctionTok{character}\NormalTok{(), }\AttributeTok{v2 =} \FunctionTok{numeric}\NormalTok{(), }\AttributeTok{v3 =} \FunctionTok{character}\NormalTok{())}
+
+\NormalTok{a }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(new\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(a)) \{}
+\NormalTok{b }\OtherTok{=}\NormalTok{ new\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME }\SpecialCharTok{==}\NormalTok{ a[i]}
+\NormalTok{temp }\OtherTok{\textless{}{-}}\NormalTok{ new\_type[b,]}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}} \DecValTok{1}
+\NormalTok{temp }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(temp[,}\DecValTok{3}\NormalTok{], }\AttributeTok{by =} \FunctionTok{list}\NormalTok{(temp}\SpecialCharTok{$}\NormalTok{UNIT\_CAT), sum)}
+\NormalTok{sum }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(temp[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ temp[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{/}\NormalTok{sum}
+\NormalTok{temp[ ,}\DecValTok{2}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{temp[ ,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ a[i]}
+\NormalTok{all\_projected }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(all\_projected, temp)}
+\NormalTok{\}}
+
+\FunctionTok{colnames}\NormalTok{(all\_projected) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Type"}\NormalTok{, }\StringTok{"\%"}\NormalTok{, }\StringTok{"County"}\NormalTok{)}
+\NormalTok{all\_projected }\OtherTok{\textless{}{-}} \FunctionTok{pivot\_wider}\NormalTok{(all\_projected, }\AttributeTok{names\_from =} \StringTok{"Type"}\NormalTok{, }\AttributeTok{values\_from =} \StringTok{"\%"}\NormalTok{)}
+\NormalTok{all\_projected }\OtherTok{\textless{}{-}}\NormalTok{all\_projected[}\FunctionTok{order}\NormalTok{(all\_projected}\SpecialCharTok{$}\NormalTok{County), ]}
+\NormalTok{c }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(all\_projected}\SpecialCharTok{$}\NormalTok{County)}
+\NormalTok{all\_projected[ ,}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{all\_projected[}\FunctionTok{is.na}\NormalTok{(all\_projected)] }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{all\_projected }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(all\_projected)}
+
+\NormalTok{color1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#e31a1c\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#1f78b4\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#b2df8a\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#33a02c\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#fb9a99\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#a6cee3\textquotesingle{}}\NormalTok{)}
+
+\NormalTok{legend }\OtherTok{\textless{}{-}} \FunctionTok{rownames}\NormalTok{(all\_projected)}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{)}\SpecialCharTok{+}\NormalTok{.}\DecValTok{1}\NormalTok{, }\AttributeTok{xpd =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{barplot}\NormalTok{(all\_projected, }\AttributeTok{horiz =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{names.arg =}\NormalTok{ c, }\AttributeTok{cex.names =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ color1, }\AttributeTok{main =} \StringTok{"Housing Type in Counties With}\SpecialCharTok{\textbackslash{}n}\StringTok{Approved SB35 Projects"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{width =} \DecValTok{1}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{32}\NormalTok{))}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{inset =} \SpecialCharTok{{-}}\FloatTok{0.19}\NormalTok{, }\AttributeTok{legend =}\NormalTok{ legend, }\AttributeTok{fill =}\NormalTok{ color, }\AttributeTok{cex =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{title =} \StringTok{"Housing Type"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sb35\_type }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(SB35[ ,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{9}\NormalTok{)])}
+
+\NormalTok{sb35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{v1 =} \FunctionTok{character}\NormalTok{(), }\AttributeTok{v2 =} \FunctionTok{numeric}\NormalTok{(), }\AttributeTok{v3 =} \FunctionTok{character}\NormalTok{())}
+
+\NormalTok{s }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(sb35\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(s)) \{}
+\NormalTok{b }\OtherTok{=}\NormalTok{ sb35\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME }\SpecialCharTok{==}\NormalTok{ s[i]}
+\NormalTok{temp }\OtherTok{\textless{}{-}}\NormalTok{ sb35\_type[b,]}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}} \DecValTok{1}
+\NormalTok{temp }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(temp[,}\DecValTok{3}\NormalTok{], }\AttributeTok{by =} \FunctionTok{list}\NormalTok{(temp}\SpecialCharTok{$}\NormalTok{UNIT\_CAT), sum)}
+\NormalTok{sum }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(temp[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ temp[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{/}\NormalTok{sum}
+\NormalTok{temp[ ,}\DecValTok{2}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{temp[ ,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ s[i]}
+\NormalTok{sb35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(sb35\_projected, temp)}
+\NormalTok{\}}
+
+\FunctionTok{colnames}\NormalTok{(sb35\_projected) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Type"}\NormalTok{, }\StringTok{"\%"}\NormalTok{, }\StringTok{"County"}\NormalTok{)}
+\NormalTok{sb35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{pivot\_wider}\NormalTok{(sb35\_projected, }\AttributeTok{names\_from =} \StringTok{"Type"}\NormalTok{, }\AttributeTok{values\_from =} \StringTok{"\%"}\NormalTok{)}
+\NormalTok{sb35\_projected }\OtherTok{\textless{}{-}}\NormalTok{ sb35\_projected[}\FunctionTok{order}\NormalTok{(sb35\_projected}\SpecialCharTok{$}\NormalTok{County), ]}
+\NormalTok{csb35 }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(sb35\_projected}\SpecialCharTok{$}\NormalTok{County)}
+\NormalTok{sb35\_projected[ ,}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+
+\NormalTok{sb35\_projected[}\FunctionTok{is.na}\NormalTok{(sb35\_projected)] }\OtherTok{\textless{}{-}} \DecValTok{0}
+
+\NormalTok{sb35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(sb35\_projected)}
+
+\NormalTok{legend1 }\OtherTok{\textless{}{-}} \FunctionTok{rownames}\NormalTok{(sb35\_projected)}
+
+\CommentTok{\#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/SB35 Housing Data", width = 5, height = 5, units = "in", res = 300)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{8}\NormalTok{)}\SpecialCharTok{+}\NormalTok{.}\DecValTok{1}\NormalTok{, }\AttributeTok{xpd =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{barplot}\NormalTok{(sb35\_projected, }\AttributeTok{horiz =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{names.arg =}\NormalTok{ csb35, }\AttributeTok{cex.names =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ color1, }\AttributeTok{main =} \StringTok{"New Housing Projects That}\SpecialCharTok{\textbackslash{}n}\StringTok{ Used SB35"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{width =} \DecValTok{1}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{32}\NormalTok{))}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{inset =} \SpecialCharTok{{-}}\FloatTok{0.6}\NormalTok{, }\AttributeTok{legend =}\NormalTok{ legend1, }\AttributeTok{fill =}\NormalTok{ color, }\AttributeTok{cex =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{title =} \StringTok{"Housing Type"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#dev.off()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{l }\OtherTok{=}\NormalTok{ projected}\SpecialCharTok{$}\NormalTok{APP\_SUBMITTED\_SB35 }\SpecialCharTok{==} \StringTok{"No"}
+\NormalTok{noSB35 }\OtherTok{\textless{}{-}}\NormalTok{ projected[l,]}
+
+\NormalTok{noSB35\_type }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(noSB35[ ,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{9}\NormalTok{)])}
+
+\NormalTok{noSB35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{v1 =} \FunctionTok{character}\NormalTok{(), }\AttributeTok{v2 =} \FunctionTok{numeric}\NormalTok{(), }\AttributeTok{v3 =} \FunctionTok{character}\NormalTok{())}
+
+\NormalTok{n }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(noSB35\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(n)) \{}
+\NormalTok{b }\OtherTok{=}\NormalTok{ noSB35\_type}\SpecialCharTok{$}\NormalTok{CNTY\_NAME }\SpecialCharTok{==}\NormalTok{ n[i]}
+\NormalTok{temp }\OtherTok{\textless{}{-}}\NormalTok{ noSB35\_type[b,]}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}} \DecValTok{1}
+\NormalTok{temp }\OtherTok{\textless{}{-}} \FunctionTok{aggregate}\NormalTok{(temp[,}\DecValTok{3}\NormalTok{], }\AttributeTok{by =} \FunctionTok{list}\NormalTok{(temp}\SpecialCharTok{$}\NormalTok{UNIT\_CAT), sum)}
+\NormalTok{sum }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(temp[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{temp[,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ temp[,}\DecValTok{2}\NormalTok{]}\SpecialCharTok{/}\NormalTok{sum}
+\NormalTok{temp[ ,}\DecValTok{2}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{temp[ ,}\DecValTok{3}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ n[i]}
+\NormalTok{noSB35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(noSB35\_projected, temp)}
+\NormalTok{\}}
+
+\FunctionTok{colnames}\NormalTok{(noSB35\_projected) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Type"}\NormalTok{, }\StringTok{"\%"}\NormalTok{, }\StringTok{"County"}\NormalTok{)}
+\NormalTok{noSB35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{pivot\_wider}\NormalTok{(noSB35\_projected, }\AttributeTok{names\_from =} \StringTok{"Type"}\NormalTok{, }\AttributeTok{values\_from =} \StringTok{"\%"}\NormalTok{)}
+\NormalTok{noSB35\_projected }\OtherTok{\textless{}{-}}\NormalTok{ noSB35\_projected[}\FunctionTok{order}\NormalTok{(noSB35\_projected}\SpecialCharTok{$}\NormalTok{County), ]}
+\NormalTok{cnosb35 }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(noSB35\_projected}\SpecialCharTok{$}\NormalTok{County)}
+\NormalTok{noSB35\_projected[ ,}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+
+\NormalTok{noSB35\_projected[}\FunctionTok{is.na}\NormalTok{(noSB35\_projected)] }\OtherTok{\textless{}{-}} \DecValTok{0}
+
+\NormalTok{noSB35\_projected }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(noSB35\_projected)}
+
+\NormalTok{legend2 }\OtherTok{\textless{}{-}} \FunctionTok{rownames}\NormalTok{(noSB35\_projected)}
+
+\CommentTok{\#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/No SB35 Housing Data", width = 5, height = 5, units = "in", res = 300)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mgp=}\FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{), }\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{6}\NormalTok{)}\SpecialCharTok{+}\NormalTok{.}\DecValTok{1}\NormalTok{, }\AttributeTok{xpd =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{barplot}\NormalTok{(noSB35\_projected, }\AttributeTok{horiz =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{names.arg =}\NormalTok{ cnosb35, }\AttributeTok{cex.names =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =}\NormalTok{ color1, }\AttributeTok{main =} \StringTok{"New Housing Projects That}\SpecialCharTok{\textbackslash{}n}\StringTok{Did Not Use SB35"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{width =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{32}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\AttributeTok{inset =} \SpecialCharTok{{-}}\FloatTok{0.42}\NormalTok{, }\AttributeTok{legend =}\NormalTok{ legend2, }\AttributeTok{fill =}\NormalTok{ color, }\AttributeTok{cex =} \FloatTok{0.35}\NormalTok{, }\AttributeTok{title =} \StringTok{"Housing Type"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Final_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#dev.off()}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

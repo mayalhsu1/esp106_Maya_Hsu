@@ -5,7 +5,36 @@ output:
   html_document: default
 date: "2023-03-06"
 ---
+**Introduction**
+California is facing a housing crisis, with little housing being built to accommodate a growing population. The California State legislator passed SB 35 in 2017, effective 2018, to help streamline housing projects in areas that don't have enough allocated housing under RHNA. Eligible projects need to be multi-famlity housing developments, and there a some requirements on the amount units designated as affordable (California Department of Housing and Community Development, 2021). There now are talks about to trying an extend the bill, since the bill expires in 2025 (Gardiner, 2023).
 
+  This bill was touted for allowing the more new affordable and dense housing. Our will look at the results of SB 35 on the housing market in Californian to if it delivers on some of its claim. We will evaluate this through data gathered from California Department of Housing and Community Development. This data set contains data on proposed/completed housing project that used SB 35. Projects are separated by county, which is are unit of analysis. We will also be using census data to have some baseline data in order to compare the effects of SB 35 on housing market.
+  
+**Research Questions**
+
+1. What does the current California Housing market look like?
+  a. What kind housing is currently built in California? 
+
+2. What kind of housing projects are being proposed/built using SB 35? 
+  a. Where are they being built? 
+  b. What kind of housing type is being built? 
+
+3. Is there a relation between median income of a county and the number of SB35 approve projects? And, is there a relationship between % change in housing between 2017-2021 and the number of SB35 approved projects?
+
+**Data Preparation**
+
+  We gathers 3 different data set to do our analysis: housing Data from the US Census, demographic data from California State Association of Counties, and a list of housing current and project housing projects from the California Department of Housing and Community Development. For both the data from census and the Department of Housing and Community Development, we had to manipulate the data tables in a way to make them usable for plotting purposes. That process will be shown below.
+
+**Census Data**
+
+  For the census data that we use we downloaded a data set from the data.census.gov. We ended up selecting the American Community Survey 1-year estimate for 2021. We narrowed further by selecting for the  housing characteristic for the state of California. 
+
+**Demographic Data**
+
+  The demographic data we is provided from the California State Association of Counties, and give some interesting statistics on the demographic per county. For our analysis we will be using using variables population and median income. We also use the county name for merging purposes.
+Housing Project Data
+
+  This housing data was provided from the California Department of Housing and Community Development; specifically there Housing Element Annual Progress Report (APR) Data by Jurisdiction and Year, Table A. This data frame give information on the total number of units construed by a county and whether that project was approved using SB 35. It also give information the housing type.
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -23,7 +52,6 @@ demographic <- read.csv("https://raw.githubusercontent.com/mayalhsu1/esp106_Maya
 
 ```{r}
 housing <- t(housing) #transposing the data
-
 headers <- housing[1, ] #extracted values from row 1 as a vector 
 colnames(housing) <- headers #renamed columns with row 1 values
 housing <- housing[-1, ] #removed first row
@@ -38,130 +66,132 @@ housing <- cbind(housing, Years) #adding dates to housing data
 ```
 
 ```{r}
-County <- rownames(housing)
-County <- substr(County, 1, nchar(County)-34)
-as.data.frame(County)
-County <- gsub(".", " ", County, fixed = TRUE)
-rownames(housing) <- 1:nrow(housing)
+County <- rownames(housing) #extracting the row names, which say the county and year
+County <- substr(County, 1, nchar(County)-34) #extracting the county name
+as.data.frame(County) #turning the vector of counties into a data frame
+County <- gsub(".", " ", County, fixed = TRUE) #replacing the periods with spaces
+rownames(housing) <- 1:nrow(housing) #changing the row names to numbers
 
-housing <- gsub("N", NA, housing)
-housing <- gsub("(X)", NA, housing)
+housing <- gsub("N", NA, housing) #replacing N values with NA
+housing <- gsub("(X)", NA, housing) #replacing (X) values with NA
 
-housing <- cbind(housing, County)
+housing <- cbind(housing, County) #adding a column for county 
 ```
 
 ```{r}
-housing_type <- housing[ ,c(9:17)]
-housing_type <- gsub("%", "", housing_type, fixed = TRUE)
-housing_type <- as.data.frame(housing_type)
-housing_type <- sapply(housing_type, as.numeric)
-housing_type <- housing_type/100
+housing_type <- housing[ ,c(9:17)] #subsetting the housing data for housing type columns
+housing_type <- gsub("%", "", housing_type, fixed = TRUE) #getting rid of % 
+housing_type <- as.data.frame(housing_type) #turning housing_type into a data frame
+housing_type <- sapply(housing_type, as.numeric) #turning the data values into numeric
+housing_type <- housing_type/100 #dividing by 100 to get proportion
 
-housing_type <- as.data.frame(housing_type)
+housing_type <- as.data.frame(housing_type) #turning into data frame
 
-housing_type <- cbind(housing_type, housing[ ,161:162])
+housing_type <- cbind(housing_type, housing[ ,161:162]) #adding year and county data
 ```
 
 ```{r}
-projected$CNTY_NAME <- str_to_title(projected$CNTY_NAME)
-#projects that where approved with SB35
+projected$CNTY_NAME <- str_to_title(projected$CNTY_NAME) #changing to title capitalization 
 i = projected$APP_SUBMITTED_SB35 == "Yes-Approved"
-SB35 <- projected[i,]
+SB35 <- projected[i,] #projects approved with SB35
 ```
 
 ```{r}
-counties <- unique(SB35$CNTY_NAME)
-counties <- sort(counties)
+counties <- unique(SB35$CNTY_NAME) #list of counties that had approved SB35 projects
+counties <- sort(counties) #alphabetizing
 ```
 
 ```{r}
-h2021 <- subset(housing_type, Years == "2021")
-sb35_housing_type <- subset(h2021, County %in% counties)
-names_sb35 <- sb35_housing_type[, 11]
-sb35_housing_type <- subset(sb35_housing_type, select = -c(10, 11))
+h2021 <- subset(housing_type, Years == "2021") #housing type data for 2021
+sb35_housing_type <- subset(h2021, h2021[ ,11] %in% counties) #subsetting 2021 housing data for only counties that had approved sb35 projects, no data for Mono or San Benito in current housing data
+names_sb35 <- sb35_housing_type[, 11] #creating object with county names
+sb35_housing_type <- subset(sb35_housing_type, select = -c(10, 11)) #removing year and county columns
 
 color <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6')
 
-sb_type <- colnames(sb35_housing_type)
-sb_type <- str_squish(sb_type)
+sb_type <- colnames(sb35_housing_type) #creating object with column names
+sb_type <- str_squish(sb_type) #removing extra spaces
 
-sb35_housing_type <- as.matrix(sb35_housing_type)
-sb35_housing_type <- t(sb35_housing_type)
+#sb35_housing_type <- as.matrix(sb35_housing_type)
+sb35_housing_type <- t(sb35_housing_type) #r
 
 #png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/Current Housing Data", width = 5, height = 5, units = "in", res = 300)
 par(mar=c(4,5,5,5)+.1, xpd = TRUE)
-barplot(sb35_housing_type, horiz = TRUE, names.arg = names_sb35, cex.names = 0.4, las = 1, col = color, main = "Housing Type in Counties With\nApproved SB35 Projects", xlab = "Proportion", cex.axis = 0.5, width = 1, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32))
+barplot(sb35_housing_type, horiz = TRUE, names.arg = names_sb35, cex.names = 0.4, las = 1, col = color, main = "Current Housing in Counties With\nApproved SB35 Projects in 2021", xlab = "Proportion", cex.axis = 0.5, width = 1, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32))
 legend("right", inset = -0.19, legend = sb_type, fill = color, cex = 0.5, title = "Housing Type")
 #dev.off()
 ```
-
+This graph shows the distribution of housing per county in 2021 for counties that had at least one SB35 approved project. All counties, with the exception of San Francisco, have a plurality or majority of their total housing units coming from 1-unit detached homes. Most counties seem to have a majority of housing coming from 1-unit detached homes. San Francisco has the most equal distribution of housing type out of all the counties. Very few housing units come from boats, RVs, and vans across counties. It seems like counties with larger cities, like San Francisco and Los Angeles, have a larger proportion of 20-or-more-unit buildings. To address the current housing shortage, this data suggests that California should be investing more in multi-unit developments as oppossed to detached single-unit homes. 
 
 ```{r}
-units <- aggregate(SB35[, 20], by = list(SB35$CNTY_NAME), sum) #number of sb35 units approved
-colnames(units) <- c("County", "Units")
+units <- aggregate(SB35[, 20], by = list(SB35$CNTY_NAME), sum) #sum of sb35 units approved for each county
+colnames(units) <- c("County", "Units") #renaming columns
 
-med_income <- as.data.frame(demographic[ ,c(1,2,29)])
-med_income <- med_income[-c(59,60), ]
-colnames(med_income) <- c("County", "Population","Median Income")
+med_income <- as.data.frame(demographic[ ,c(1,2,29)]) #extracting county, population, and median income columns from demographics data
+med_income <- med_income[-c(59,60), ] #removing blank rows
+colnames(med_income) <- c("County", "Population","Median Income") #renaming columns
 
-income <- med_income[ ,3]
-income <- gsub("$", "", income, fixed = TRUE)
-income <- gsub(" ", "", income, fixed = TRUE)
-income <- gsub(",", "", income, fixed = TRUE)
-income <- as.data.frame(income)
-income <- sapply(income, as.numeric)
-med_income[ ,3] <- income
+income <- med_income[ ,3] #creating object with median income data
+income <- gsub("$", "", income, fixed = TRUE) #removing $
+income <- gsub(" ", "", income, fixed = TRUE) #removing extra spaces
+income <- gsub(",", "", income, fixed = TRUE) #removing commas
+income <- as.data.frame(income) #changing to data frame
+income <- sapply(income, as.numeric) #making values numeric
+med_income[ ,3] <- income #replacing third column in med_income with numeric income object
 
-population <- med_income[ ,2]
-population <- gsub(",", "", population, fixed = TRUE)
-population <- as.data.frame(population)
-population <- sapply(population, as.numeric)
-med_income[ ,2] <- population
+population <- med_income[ ,2] #creating object with population data
+population <- gsub(",", "", population, fixed = TRUE) #removing commas
+population <- as.data.frame(population) #changing into data frame
+population <- sapply(population, as.numeric) #making values numeric
+med_income[ ,2] <- population #replacing second column in med_income with numeric income object
 
-approved_v_income <- merge(units, med_income, by = "County")
-approved_v_income[ ,5] <- approved_v_income[ ,2]/approved_v_income[ ,3]
+approved_v_income <- merge(units, med_income, by = "County") #merging sb35 units data with income and population data by county
+approved_v_income[ ,5] <- approved_v_income[ ,2]/approved_v_income[ ,3] #creating a column with sb35 units per person for each county
 colnames(approved_v_income) <- c("County", "Count", "Population", "Median Income", "Units/Person")
 
 ggplot(approved_v_income, aes(x = approved_v_income[ ,4], y = approved_v_income[ ,5]))+
   geom_point()+geom_smooth(method = "lm")+
-  labs(x = "Median Income", y = "SB35 Projects per Person")
+  labs(x = "Median Income", y = "SB35 Projects per Person", title = "Median Income per County vs. SB35 Projects/Person per County")
 
-cor.test(approved_v_income[ ,4], approved_v_income[ ,5])
+cor.test(approved_v_income[ ,4], approved_v_income[ ,5]) #getting test statistics
+model <- lm(approved_v_income[ ,5] ~ approved_v_income[ ,4], approved_v_income)
+coef(model)
 ```
-
+This graph includes data points for counties that had at least one approved SB35 project. This graph shows the correlation between median income for each county and the number of SB35 projects per person per county. We might expect that as median income decreases, the number of SB35 projects per person increases because the bill is marketed as affordable housing legislation. The y-axis is projects per person so that comparisons can be made across different counties with different populations. The slope of the trend line is 1.015553e-08, which suggests that there is practically no relationship between the two variables. Additionally, the p-value is greater than 0.05, which means the result is not statistically significant. Moreover, counties with lower median income do not necessarily have more SB35 approved projects per person.
 
 ```{r}
-sub <- housing[ , c(2, 161, 162)]
-#sub <- subset(sub, County %in% SB35_agg[ ,1])
-sub <- as.data.frame(sub)
-sub <- subset(sub, Years == 2017 | Years == 2021)
-sub <- sub[-c(145, 148), ]
-sub[ ,1] <- gsub(",", "", sub[ ,1], fixed = TRUE)
-sub[ ,1:2] <- sapply(sub[ ,1:2], as.numeric)
+sub <- as.data.frame(housing[ , c(2, 161, 162)]) #creating a data frame with total housing units, year, and county
+sub <- subset(sub, Years == 2017 | Years == 2021) #subsetting for 2017 and 2021
+sub <- sub[-c(145, 148), ] #removing Tehama county because it has no data for 2017
+sub[ ,1] <- gsub(",", "", sub[ ,1], fixed = TRUE) #eliminating commas in total housing column
+sub[ ,1:2] <- sapply(sub[ ,1:2], as.numeric) #making total housing and years columns numeric 
 
 
-colnames(sub) <- c("Total Housing Units", "Year", "County")
+colnames(sub) <- c("Total Housing Units", "Year", "County") #renaming columns
 
-sub <- pivot_wider(sub, names_from = "Year", values_from = "Total Housing Units")
-sub[ ,4] <- (sub[ ,2]-sub[ ,3])/sub[ ,3]
-colnames(sub) <- c("County", "2021",  "2017", "Percent Change in Housing")
+sub <- pivot_wider(sub, names_from = "Year", values_from = "Total Housing Units") #chaning data frame so that columns are county, 2017, and 2021; values for 2017 and 2021 columns are total housing units from those respective years
+sub[ ,4] <- (sub[ ,2]-sub[ ,3])/sub[ ,3] #creating a fourth column with percent change in total housing units
+colnames(sub) <- c("County", "2021",  "2017", "Percent Change in Housing") #changing column names
 
-change_v_sb35 <- merge(sub, units, by = "County")
-change_v_sb35 <- merge(change_v_sb35, approved_v_income, by = "County")
+change_v_sb35 <- merge(sub, approved_v_income, by = "County") #merging sb35 units/person data with percent change in total housing
 
-ggplot(change_v_sb35, aes(x = change_v_sb35[ ,4], y = change_v_sb35[ ,9]))+
+ggplot(change_v_sb35, aes(x = change_v_sb35[ ,4], y = change_v_sb35[ ,8]))+
   geom_point()+geom_smooth(method = "lm")+
-  labs(x = "Percent Change in Total Housing", y = "Number of Approved SB35 Projects")
+  labs(x = "Percent Change in Total Housing", y = "Number of Approved SB35 Projects per Person")
 
-cor.test(change_v_sb35[ ,4], change_v_sb35[ ,9])
+model1 <- lm(change_v_sb35[ ,8] ~ change_v_sb35[ ,4], change_v_sb35)
+coef(model1)
+cor.test(change_v_sb35[ ,4], change_v_sb35[ ,8]) #getting test statistics
 ```
+This graph includes data points for counties that had at least one approved SB35 project. This graph shows the correlation between the number of approved SB35 projects per person and the percent change in total housing. The slope of the trend line is -0.001156582, which means there is practically no relationship between the 2 variables. The p-value is also greater than 0.05, which means the relationship is not statistically significant. The graph suggests that SB35 projects are not driving the change in housing.
 
 ```{r}
-new_type <- as.data.frame(projected[ ,c(2, 9)])
+new_type <- as.data.frame(projected[ ,c(2, 9)]) #creating new data frame with county name and housing type for new projects
 
-all_projected <- data.frame(v1 = character(), v2 = numeric(), v3 = character())
+all_projected <- data.frame(v1 = character(), v2 = numeric(), v3 = character()) #creating empty data frame
 
-a <- unique(new_type$CNTY_NAME)
+a <- unique(new_type$CNTY_NAME) #creating object with all county names in new_type data
+#for loop that creates a data frame with the proportion of each housing type per county 
 for(i in 1:length(a)) {
 b = new_type$CNTY_NAME == a[i]
 temp <- new_type[b,]
@@ -174,17 +204,109 @@ temp[ ,3] <- a[i]
 all_projected <- rbind(all_projected, temp)
 }
 
-colnames(all_projected) <- c("Type", "%", "County")
-all_projected <- pivot_wider(all_projected, names_from = "Type", values_from = "%")
-all_projected[ ,1] <- NULL
+colnames(all_projected) <- c("Type", "%", "County") #changing column names
+all_projected <- pivot_wider(all_projected, names_from = "Type", values_from = "%") #changing format of data frame so that the housing types are the column names
+all_projected <-all_projected[order(all_projected$County), ] #alphabetizing by county
+c <- unique(all_projected$County) #creating object of county names
+all_projected[ ,1] <- NULL #removing county column
+all_projected[is.na(all_projected)] <- 0 #setting NA values to 0 so we can graph data
+all_projected <- t(all_projected) #transposing data
 
-all_projected[is.na(all_projected)] <- 0
+color1 <- c('#e31a1c','#1f78b4','#b2df8a','#33a02c','#fb9a99', '#a6cee3')
 
-all_projected <- t(all_projected)
+legend <- rownames(all_projected) #creating object of row names (housing type)
 
-
-par(mar=c(4,5,5,5)+.1, xpd = TRUE)
-barplot(all_projected, horiz = TRUE, names.arg = a, cex.names = 0.4, las = 1, col = color, main = "Housing Type in Counties With\nApproved SB35 Projects", xlab = "Proportion", cex.axis = 0.5, width = 1, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32))
-legend("right", inset = -0.19, legend = sb_type, fill = color, cex = 0.5, title = "Housing Type")
-
+#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/Projected Housing Data", width = 5, height = 5, units = "in", res = 300)
+par(mar=c(4,5,5,7)+.1, xpd = TRUE)
+barplot(all_projected, horiz = TRUE, names.arg = c, cex.names = 0.3, las = 1, col = color1, main = "Housing Type of Future Housing Developments", xlab = "Proportion", cex.axis = 0.5, width = 0.5, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32), cex.main = 0.7)
+legend("right", inset = -0.55, legend = legend, fill = color, cex = 0.4, title = "Housing Type")
+#dev.off()
 ```
+This graph shows the housing type of future/planned houisng developments. The majority of new housing units are not single-family detached homes. While San Francisco had the lowest proportion of single-family detached homes in the graph on current housing, it has the highest proportion of single-family detached homes in this graph. These findings could reflect the fact that California is running out of space; there is a desire for less sprawl because we need more housing on more limited space. 2-, 3-, and 4-unit structures seem to be the most popular along with accessory dwelling units and mobile home units.
+
+```{r}
+sb35_type <- as.data.frame(SB35[ ,c(2, 9)]) #creating new data frame with county name and housing type for new projects for projects approved by SB35
+
+sb35_projected <- data.frame(v1 = character(), v2 = numeric(), v3 = character()) #creating new data frame
+
+s <- unique(sb35_type$CNTY_NAME)  #creating object with all county names in sb35_type data
+#for loop that creates a data frame with the proportion of each housing type per county
+for(i in 1:length(s)) {
+b = sb35_type$CNTY_NAME == s[i]
+temp <- sb35_type[b,]
+temp[,3] <- 1
+temp <- aggregate(temp[,3], by = list(temp$UNIT_CAT), sum)
+sum <- sum(temp[,2])
+temp[,3] <- temp[,2]/sum
+temp[ ,2] <- NULL
+temp[ ,3] <- s[i]
+sb35_projected <- rbind(sb35_projected, temp)
+}
+
+colnames(sb35_projected) <- c("Type", "%", "County")
+sb35_projected <- pivot_wider(sb35_projected, names_from = "Type", values_from = "%")
+sb35_projected <- sb35_projected[order(sb35_projected$County), ]
+csb35 <- unique(sb35_projected$County)
+sb35_projected[ ,1] <- NULL
+sb35_projected[is.na(sb35_projected)] <- 0
+sb35_projected <- t(sb35_projected)
+
+legend1 <- rownames(sb35_projected)
+
+#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/SB35 Housing Data", width = 5, height = 5, units = "in", res = 300)
+par(mar=c(4,5,5,8)+.1, xpd = TRUE)
+barplot(sb35_projected, horiz = TRUE, names.arg = csb35, cex.names = 0.4, las = 1, col = color1, main = "New Housing Projects That\n Used SB35", xlab = "Proportion", cex.axis = 0.5, width = 1, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32))
+legend("right", inset = -0.6, legend = legend1, fill = color, cex = 0.4, title = "Housing Type")
+#dev.off()
+```
+This graph shows the housing type of SB35 approved projects per county. The distribution varies by county. For example, Sonoma, Solano, San Mateo, San Francisco, Sacramento, El Dorado, and Alameda have almost all of these SB35 projects as 5 or more units per structure. Meanwhile, counties like Placer, Kings, and Butte have almost all single-family detached homes, which is strange since SB35 is intendeed for multi-unit developments. Overall, though, it seems like counties are using SB35 to build multi-unit housing developments, which will hopefully help ease the housing shortage.
+
+
+```{r}
+l = projected$APP_SUBMITTED_SB35 == "No"
+noSB35 <- projected[l,] #creating new data frame with houisng projects that did not submit an SB35 application
+
+noSB35_type <- as.data.frame(noSB35[ ,c(2, 9)])
+
+noSB35_projected <- data.frame(v1 = character(), v2 = numeric(), v3 = character())
+
+n <- unique(noSB35_type$CNTY_NAME)
+for(i in 1:length(n)) {
+b = noSB35_type$CNTY_NAME == n[i]
+temp <- noSB35_type[b,]
+temp[,3] <- 1
+temp <- aggregate(temp[,3], by = list(temp$UNIT_CAT), sum)
+sum <- sum(temp[,2])
+temp[,3] <- temp[,2]/sum
+temp[ ,2] <- NULL
+temp[ ,3] <- n[i]
+noSB35_projected <- rbind(noSB35_projected, temp)
+}
+
+colnames(noSB35_projected) <- c("Type", "%", "County")
+noSB35_projected <- pivot_wider(noSB35_projected, names_from = "Type", values_from = "%")
+noSB35_projected <- noSB35_projected[order(noSB35_projected$County), ]
+cnosb35 <- unique(noSB35_projected$County)
+noSB35_projected[ ,1] <- NULL
+
+noSB35_projected[is.na(noSB35_projected)] <- 0
+
+noSB35_projected <- t(noSB35_projected)
+
+legend2 <- rownames(noSB35_projected)
+
+#png(filename = "/Users/mayahsu/Desktop/school/environmental data science/final/No SB35 Housing Data", width = 5, height = 5, units = "in", res = 300)
+par(mgp=c(3,1,0), mar=c(4,5,8,6)+.1, xpd = TRUE)
+barplot(noSB35_projected, horiz = TRUE, names.arg = cnosb35, cex.names = 0.3, las = 1, col = color1, main = "New Housing Projects That\nDid Not Use SB35", xlab = "Proportion", cex.axis = 0.5, width = 0.6, cex.lab = 0.7, xlim = c(0,1), ylim = c(0, 32), cex.main = 0.7)
+legend("right", inset = -0.42, legend = legend2, fill = color, cex = 0.35, title = "Housing Type")
+#dev.off()
+```
+This graph shows data from the future/projected housing data set for projects not approved by SB35. The trends for this graph are more similar to the graph on housing type for all future/projected housing developments. 2-, 3-, and 4-unit structures seem to be the most popular along with accessory dwelling units and mobile home units.
+
+**Conclusion**
+  The finding of our research show that project approved by SB 35 tend me more denser in nature, which is something the bill claimed to do. This is great new for California housing. However, that is no the case for all counties, and would be interesting to investigate further why that might be. 
+  Our research falls short in addressing the affordability of the units approved by SB35, since we don't have any data on that. Looking more into how many unit where designated as affordable would be a good next step in trying to understand SB 35 impacts on the housing market.
+  
+**Works Cited**
+  California Department of Housing and Community Development. “Updated Streamlined Ministerial Approval Process.” California Department of Housing and Community Development, 30 March 2021, https://www.hcd.ca.gov/policy-research/docs/sb-35-guidelines-update-final.pdf.
+Gardiner, Dustin. “California law that fast-tracks new housing might be expanded.” San Francisco Chronicle, 13 February 2023, https://www.sfchronicle.com/politics/article/sb35-new-housing-law-17777302.php.
